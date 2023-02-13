@@ -1,5 +1,6 @@
 "0","# number of delayed flights at Newark Airport"
 "0","newark_flights_delayed %>% "
+"0","  # filter(dep_delay > 15) %>%"
 "0","  group_by(month_name) %>%"
 "0","  summarise(num_delays = n()) %>% "
 "0","  ggplot() +"

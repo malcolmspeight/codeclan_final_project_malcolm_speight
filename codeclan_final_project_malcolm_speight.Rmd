@@ -76,10 +76,26 @@ newark_flights_delayed %>%
   theme_grey()
 ```
 
+*Weather*
 
+```{r}
+# capture only newark weather
+newark_weather <- weather_data %>% 
+  filter(origin == "EWR")
 
+colSums(is.na(newark_weather))
+```
 
+There are 8,700 weather observations relating to Newark Airport in 2017. Of these, most variables had in excess of 8,500 missing values. Only `wind data` (3 variables) and `visibility` were sufficiently populated to be of use with the rest being discarded. The wind data each had ~600 missing values (less than 7% of the population) whilst `visibility` had only 3 missing values. The missing values were removed as being immaterial in volume to the population of data.
 
+Despite an extensive internet search I could not find free access to hourly weather data for Newark Airport to supplement the provided data set. 
+
+```{r}
+# remove missing values
+newark_weather <- newark_weather %>% 
+  select(wind_dir, wind_speed, wind_gust, visib) %>% 
+  drop_na()
+```
 
 
 

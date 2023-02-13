@@ -1,0 +1,3 @@
+"0","newark_weather <- newark_weather %>% "
+"0","  select(wind_dir, wind_speed, wind_gust, visib) %>% "
+"0","  drop_na()"
