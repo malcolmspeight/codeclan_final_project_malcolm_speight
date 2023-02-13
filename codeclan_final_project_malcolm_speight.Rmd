@@ -1,0 +1,85 @@
+---
+title: "Newark Flight Data"
+author: "Malcolm Speight"
+date: "2023-02-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r, include=FALSE}
+library(tidyverse)
+library(lubridate)
+```
+
+```{r, include=FALSE}
+flights_data <- read_csv("data/flights.csv") %>% 
+  janitor::clean_names()
+airports_data <- read_csv("data/airports.csv") %>% 
+  janitor::clean_names()
+weather_data <- read_csv("data/weather.csv") %>% 
+  janitor::clean_names()
+plane_data <- read_csv("data/planes.csv") %>% 
+  janitor::clean_names()
+```
+
+```{r}
+# capture only newark airport flights
+newark_flights <- inner_join(flights_data, airports_data, by = c("origin" = "faa")) %>% 
+  filter(name == "Newark Liberty International Airport") %>% 
+  mutate(date = make_date(year, month, day)) %>% # add date field
+  mutate(month_name = month(date, label = TRUE)) # add month name
+```
+
+```{r}
+# categorise delay times
+# delays less than 15 mins are "on time" according to FAA
+newark_flights_delayed <- newark_flights %>% 
+  filter(dep_delay > 0) %>% 
+  mutate(delay_category = case_when(
+    dep_delay > 60 ~ "> 1 hr", 
+    dep_delay >= 15 ~ "<= 1hr", 
+    TRUE ~ "< 15 mins"
+  ))
+```
+
+```{r}
+# number of delayed flights at Newark Airport
+newark_flights_delayed %>% 
+  group_by(month_name) %>%
+  summarise(num_delays = n()) %>% 
+  ggplot() +
+  aes(x = month_name, y = num_delays) +
+  geom_col(fill = "lightblue") + 
+  labs(
+    x = "", 
+    y = "number of delays\n", 
+    title = "Newark Airport - number of delayed flights\n"
+  ) + 
+  theme_grey()
+```
+
+```{r}
+# average flight delay at Newark Airport
+newark_flights_delayed %>% 
+  group_by(month_name) %>% 
+  summarise(average_delay = mean(dep_delay)) %>% 
+  ggplot() +
+  aes(x = month_name, y = average_delay) + 
+  geom_col(fill = "lightblue") +
+  labs(
+    x = "", 
+    y = "average delay (mins)\n", 
+    title = "Newark Airport - average flight delay\n") + 
+  theme_grey()
+```
+
+
+
+
+
+
+
+
