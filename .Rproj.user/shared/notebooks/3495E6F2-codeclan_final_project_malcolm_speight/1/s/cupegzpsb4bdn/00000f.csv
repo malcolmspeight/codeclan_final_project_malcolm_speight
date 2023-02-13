@@ -1,0 +1,4 @@
+"0","newark_weather_delays <- newark_flights_delayed %>% "
+"0","  select(dep_delay, time_hour) %>% "
+"0","  inner_join(newark_weather, by = ""time_hour"") %>% "
+"0","  select(-time_hour)"

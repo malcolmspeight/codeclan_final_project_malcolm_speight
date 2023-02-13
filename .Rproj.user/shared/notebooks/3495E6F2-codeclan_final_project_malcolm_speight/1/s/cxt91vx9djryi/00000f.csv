@@ -1,3 +1,4 @@
+"0","# capture only newark weather"
 "0","newark_weather <- weather_data %>% "
 "0","  filter(origin == ""EWR"")"
 "0",""
