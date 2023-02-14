@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```{r, include=FALSE}
 library(tidyverse)
 library(lubridate)
+library(ggfortify)
 ```
 
 ```{r, include=FALSE}
@@ -109,7 +110,7 @@ newark_weather_delays <- newark_flights_delayed %>%
   select(-time_hour)
 ```
 
-The result is a dataset of 41,296 observations with 5 variables. 
+The result is a dataset of 41,296 observations with 5 numeric variables. 
 
 ```{r}
 glimpse(newark_weather_delays)
@@ -122,9 +123,29 @@ newark_weather_delays %>%
   facet_wrap(~ key, scales = "free") + 
   theme_minimal()
 ```
-The dependent variable (`dep_delay`) is very right-skewed. Normally this may prove problematic for use within linear regression but these values are to be expected. Most scheduled airline flights take off on-time or if delayed, the delay is not excessive, so we would expect most delays to be at the lower end of the scale. Interestingly, `wind_gust` and `wind_speed` are similarly right-skewed and so may prove to have a strong relationship with `dep_delay`.
+The dependent variable (`dep_delay`) is very right-skewed. Most scheduled airline flights take off on-time or if delayed, the delay is not excessive, so we would expect most delays to be at the lower end of the scale. Interestingly, `wind_gust` and `wind_speed` are similarly right-skewed.
 
-Visibility (`visib`) is very left-skewed with the vast majority of observations providing a clear sight for 10 miles. Wind direction (`wind_dir`) is the most normally distributed of all weather variables. 
+Visibility (`visib`) is very left-skewed with the vast majority of observations providing a clear sight for 10 miles. Wind direction (`wind_dir`) is the most normally distributed of all the weather variables. 
+
+The skewness of the variables can be lessened by log transforming the data. I'll look to log transform all of the independent variables except for `wind_dir` which as noted above has a fairly normal distribution. 
+
+```{r}
+newark_weather_delays_log <- newark_weather_delays %>% 
+  mutate(visib_log = log(visib),
+         wind_gust_log = log(wind_gust + 1), # to avoid -Infinity
+         wind_speed_log = log(wind_speed + 1)) %>% # to avoid -Infinity
+  select(-c("visib", "wind_gust", "wind_speed")) 
+```
+
+```{r, message=FALSE, warning=FALSE}
+newark_weather_delays_log %>% 
+  gather() %>% 
+  ggplot() +
+  geom_histogram(mapping = aes(x = value, fill = key), colour = "black") +
+  facet_wrap(~ key, scales = "free") + 
+  theme_minimal()
+```
+The log of the visibility variable remains skewed left but `wind_gust` and `wind_speed` appear more normally distributed than prior to transformation.
 
 *Correlation*
 
@@ -137,7 +158,8 @@ A positive value indicates that two variables will move in the same direction as
 Looking at the `dep_delay` column we can see that the relationship between delays and weather events are very weakly correlated indeed.  
 
 ```{r}
-cor(newark_weather_delays[, c("dep_delay", "wind_dir", "wind_speed", "wind_gust", "visib")])
+cor(newark_weather_delays_log[, c("dep_delay", "wind_dir", 
+                                  "wind_speed_log", "wind_gust_log", "visib_log")])
 ```
 
 *Fitting the multiple linear regression model*
@@ -145,7 +167,7 @@ cor(newark_weather_delays[, c("dep_delay", "wind_dir", "wind_speed", "wind_gust"
 The following command fits a linear regression model that relates the 4 independent/predictor variables from our dataset to the total departure delay (`dep_delay`), the dependent/reponse variable.
 
 ```{r}
-weather_delays_mod1 <- lm(data = newark_weather_delays, dep_delay ~ .)
+weather_delays_mod1 <- lm(data = newark_weather_delays_log, dep_delay ~ .)
 ```
 
 To evaluate how well the model fits our data and how well it explains the values of the dependent variable, we run the `summary` command. 
@@ -156,22 +178,36 @@ summary(weather_delays_mod1)
 
 *Model evaluation*
 
+The `residuals` provide a measure of the error in our model predictions - the residual is equal to the true value less the model predicted value. The maximum error of 1162.97 shows that linear regression under-predicted the departure delay by over 19 hours (19 x 60 mins = 1,140) for at least one observation. This is quite substantial. 
+
+The log of the `wind_dir` and `visib` variables both have a very small `p-value` denoted by Pr(>|t|) and are statistically significant, indicated by the 3-stars (***). This indicates that their coefficients are indicative of a true relationship, rather than just occuring by chance. This is not the case for the log of `wind_gust` or `wind_speed` indicating that these variables can be ignored and removed from the model. 
+
 The regression coefficients (under the `Estimate` column) indicate the estimated change in value in departure delays for a one unit change in each of the predictor variables, assuming all other values are held constant. 
 
-From the available weather dataset, visibility (`visib`) impacts departure delays the most. For each additional mile of visibility, departure delays will reduce by just over 2 minutes. 
+Of the statistically significant variables from the weather dataset, visibility impacts departure delays the most. For each additional increment in the log of `visib`, departure delays will decrease by just over 9 minutes. 
 
-The wind variables (`wind_dir` and `wind_speed`) have very little impact on departure delays whilst `wind_gust` has a `NA` value. This indicates it is linearly related to the other wind variables and should be removed from the model.
+Towards the bottom of the summary table, the Multiple R-squared value provides a measure of how well our model of weather data explains the movement in departure delays. Similar to the correlation coefficient, the closer the R-squared value is to 1.0, the better the model explains the data. Since our model has an R-squared value of 0.00573, this informs us that the model is a very poor predictor as it explains only 0.57% of movement in departure delays. 
 
-The `residuals` provide a measure of the error in our model predictions - the residual is equal to the true value less the model predicted value. The maximum error of 1163.56 shows that linear regression under-predicted the departure delay by over 19 hours (19 x 60 mins = 1,140) for at least one observation. This is quite substantial. 
+From the above indicators, it would appear that weather events have little impact on departure delays at Newark Airport. 
 
-Each of the weather variables has a very small `p-value` denoted by Pr(>|t|) and all are statistically significant, indicated by the 3-stars (***). This indicates that the coefficients are indicative of true relationship, rather than just occuring by chance.  
+*Validity of regression model*
 
-Towards the bottom of the summary table, the Multiple R-squared value provides a measure of how well our model of weather data explains the movement in departure delays. Similar to the correlation coefficient, the closer the R-squared value is to 1.0, the better the model explains the data. Since our model has an R-squared value of 0.00629, this informs us that the model is a very poor predictor as it explains only 0.67% of movement in departure delays. 
+Assessing the validity of the linear regression requires that:
 
-Given the above indicators, it is clear that weather has little impact on departure delays at Newark Airport. 
+1. The errors of the model (residuals) are independent of each other.
+  - the blue line in the Residuals vs Fitted graph below shows that this condition is true. 
 
+2. The residuals are normally distributed. 
+  - the Normal Q-Q plot shows the data points diverging from the dotted line as values increase, highlighting that this assumption may not be satisfied.  
+  
+3. There is no systematic increase or decrease in variation across the range of data
+  - the data points should occur in a fixed width band in the Scale-Location plot. This doesn't appear to hold as the data points funnel towards a point as the fitted values rise in value. 
 
+```{r}
+autoplot(weather_delays_mod1)
+```
 
+It would appear that a linear regression produces a poor explanation for the movement in departure delays and the residuals from which may not satisfy required conditions for the model to hold. Given these issues it may instead be best to consider if we can identify patterns in the dataset for weather delays at Newark Airport that may not be immediately apparent or explicitly defined. 
 
 
 
