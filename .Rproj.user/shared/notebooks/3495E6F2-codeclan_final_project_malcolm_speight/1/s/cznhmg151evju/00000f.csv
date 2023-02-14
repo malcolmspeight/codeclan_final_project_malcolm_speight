@@ -1,0 +1,5 @@
+"0","newark_flights_clean <- newark_flights %>% "
+"0","  mutate(dep_time = coalesce(dep_time, mean(dep_time, na.rm = TRUE)), "
+"0","         dep_delay = coalesce(dep_delay, mean(dep_delay, na.rm = TRUE)), "
+"0","         arr_time = coalesce(arr_time, mean(arr_time, na.rm = TRUE)), "
+"0","         arr_delay = coalesce(arr_delay, mean(arr_delay, na.rm = TRUE)))"

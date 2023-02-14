@@ -1,0 +1,7 @@
+"0","newark_weather_delays %>% "
+"0","  select(-time_hour) %>% # remove time stamp"
+"0","  gather() %>% "
+"0","  ggplot() +"
+"0","  geom_histogram(mapping = aes(x = value, fill = key), colour = ""black"") +"
+"0","  facet_wrap(~ key, scales = ""free"") + "
+"0","  theme_minimal()"

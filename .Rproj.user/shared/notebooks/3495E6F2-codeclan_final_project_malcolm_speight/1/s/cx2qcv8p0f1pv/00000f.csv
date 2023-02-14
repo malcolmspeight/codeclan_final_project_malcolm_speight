@@ -1,5 +1,0 @@
-"0","newark_weather_delays_log <- newark_weather_delays %>% "
-"0","  mutate(visib_log = log(visib),"
-"0","         wind_gust_log = log(wind_gust + 1), # to avoid -Infinity"
-"0","         wind_speed_log = log(wind_speed + 1)) %>% # to avoid -Infinity"
-"0","  select(-c(""visib"", ""wind_gust"", ""wind_speed"")) "
