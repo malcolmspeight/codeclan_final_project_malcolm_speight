@@ -1,0 +1,2 @@
+"0","newark_delays_and_weather <- "
+"0","  inner_join(newark_flights_clean, newark_weather_clean, by = ""time_hour"")"

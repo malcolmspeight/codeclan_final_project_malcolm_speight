@@ -1,0 +1,5 @@
+"0","newark_weather_clean <- newark_weather_clean %>% "
+"0","  mutate(wind_dir = coalesce(wind_dir, mean(wind_dir, na.rm = TRUE)), "
+"0","         wind_speed = coalesce(wind_speed, mean(wind_speed, na.rm = TRUE)),"
+"0","         wind_gust = coalesce(wind_gust, mean(wind_gust, na.rm = TRUE)),"
+"0","         visib = coalesce(visib, mean(visib, na.rm = TRUE)))"

@@ -1,0 +1,7 @@
+"0","# remove outliers from flights data"
+"0","newark_flights_clean <- newark_flights_clean %>% "
+"0","  mutate(max_air_time = quantile(air_time, 0.75) + (1.5 * IQR(air_time))) %>% "
+"0","  mutate(max_distance = quantile(distance, 0.75) + (1.5 * IQR(distance))) %>% "
+"0","  filter(air_time <= max_air_time) %>% "
+"0","  filter(distance <= max_distance) %>% "
+"0","  select(-c(max_air_time, max_distance))"

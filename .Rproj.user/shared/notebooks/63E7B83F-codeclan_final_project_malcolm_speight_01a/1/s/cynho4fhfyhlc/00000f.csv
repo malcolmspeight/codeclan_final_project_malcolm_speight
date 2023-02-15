@@ -1,0 +1,2 @@
+"0","newark_flights <- newark_flights %>% "
+"0","  select(-c(name, lat, lon, alt, tz, dst, tzone, origin))"

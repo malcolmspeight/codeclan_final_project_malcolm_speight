@@ -1,0 +1,3 @@
+"0","# remove NAs from air_time"
+"0","newark_flights_clean <- newark_flights %>% "
+"0","  drop_na(air_time)"

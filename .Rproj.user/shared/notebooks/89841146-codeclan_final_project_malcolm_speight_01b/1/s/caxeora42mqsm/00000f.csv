@@ -1,0 +1,3 @@
+"0","newark_weather_clean <- newark_weather %>% "
+"0","  select(-c(temp, dewp, humid, precip, pressure)) %>% "
+"0","  select(-c(origin, year, month, day, hour))"

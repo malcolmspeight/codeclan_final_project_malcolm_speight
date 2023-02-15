@@ -1,0 +1,3 @@
+"0","# add dependent variable"
+"0","newark_flights_clean <- newark_flights_clean %>% "
+"0","  mutate(delayed = ifelse(dep_delay > 0, TRUE, FALSE), .after = dep_delay)"

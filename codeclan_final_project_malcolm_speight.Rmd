@@ -313,6 +313,17 @@ And there are still 115,968 observations and we have added a `cancelled_flight` 
 dim(newark_flights_clean)
 ```
 
+_Dependent variable_
+
+There is currently no dependent variable (class) in the dataset so we should add one. Newark Airport are interested in departure delays. Although the US aviation authority (The FAA) state that flights departing with less than a 15 minute delay are deemed to be 'on time', we will classify all flights with a departure delay of greater than 0 as being delayed. 
+
+```{r}
+# add dependent variable
+newark_flights_clean <- newark_flights_clean %>% 
+  mutate(delayed = ifelse(dep_delay > 0, TRUE, FALSE), .after = dep_delay)
+```
+
+
 _Weather data_
 
 As with the flights data from Newark, let's also refresh the weather data. 
@@ -329,7 +340,9 @@ The newark weather data contains 15 variables with 8,735 observations.
 glimpse(newark_weather)
 ```
 
-There are a number of missing values across the dataset. 
+As previously stated, despite an extensive internet search I could not find free access to hourly weather data for Newark Airport to supplement the provided data set. 
+
+There are a number of missing values across the weather dataset. 
 
 ```{r}
 colSums(is.na(newark_weather))
@@ -377,6 +390,7 @@ For the retained variables there has been no loss of data - there are still 8,73
 dim(newark_weather_clean)
 ```
 
+_Weather delays_
 
 
 
@@ -390,29 +404,13 @@ dim(newark_weather_clean)
 
 
 
-These were dealt with during earlier attempts at linear regression. There are no missing values in the `newark_weather_delays` dataset, which was created during our linear regression analysis. The dataset contains departure delays (`dep_delays` > 0) and the 4 remaining weather variables.  
-
-```{r}
-glimpse(newark_weather_delays)
-```
-_Dependent variable_
 
 
 
 
 
 
-```{r}
-# categorise delay times
-# delays less than 15 mins are "on time" according to FAA
-newark_weather_delays_cat <- newark_weather_delays %>% 
-  filter(dep_delay > 0) %>% 
-  mutate(delay_category = case_when(
-    dep_delay > 60 ~ "delay > 1 hr", 
-    dep_delay >= 15 ~ "delay <= 1hr", 
-    TRUE ~ "delay < 15 mins"
-  ))
-```
+
 
 
 

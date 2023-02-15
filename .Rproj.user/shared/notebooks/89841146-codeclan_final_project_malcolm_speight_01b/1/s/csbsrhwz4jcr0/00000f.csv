@@ -1,0 +1,3 @@
+"0","newark_weather_delays <- "
+"0","  inner_join(newark_flights_clean, newark_weather_clean, by = ""time_hour"") %>% "
+"0","  select(delayed, wind_dir, wind_speed, wind_gust, visib)"

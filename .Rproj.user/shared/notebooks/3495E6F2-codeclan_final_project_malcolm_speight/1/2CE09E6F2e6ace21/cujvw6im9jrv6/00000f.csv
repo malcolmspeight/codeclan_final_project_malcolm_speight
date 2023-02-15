@@ -1,0 +1,3 @@
+"0","# capture only newark airport flights"
+"0","newark_flights <- inner_join(flights_data, airports_data, by = c(""origin"" = ""faa"")) %>% "
+"0","  filter(name == ""Newark Liberty International Airport"") "

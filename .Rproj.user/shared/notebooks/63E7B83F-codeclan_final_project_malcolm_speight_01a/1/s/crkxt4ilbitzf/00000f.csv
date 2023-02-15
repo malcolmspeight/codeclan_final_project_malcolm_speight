@@ -1,0 +1,5 @@
+"0","# capture only newark airport flights"
+"0","newark_flights <- inner_join(flights_data, airports_data, by = c(""origin"" = ""faa"")) %>% "
+"0","  filter(name == ""Newark Liberty International Airport"") %>% "
+"0","  mutate(date = make_date(year, month, day)) %>% # add date field"
+"0","  mutate(month_name = month(date, label = TRUE)) # add month name"

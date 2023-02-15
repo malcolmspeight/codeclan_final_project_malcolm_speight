@@ -1,0 +1,4 @@
+"0","# remove missing values"
+"0","newark_weather_tidy <- newark_weather %>% "
+"0","  select(wind_dir, wind_speed, wind_gust, visib, time_hour) %>% "
+"0","  drop_na()"

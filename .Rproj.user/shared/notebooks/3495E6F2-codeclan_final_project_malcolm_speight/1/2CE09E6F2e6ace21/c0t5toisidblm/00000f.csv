@@ -1,0 +1,2 @@
+"0","newark_flights_clean <- newark_flights_clean %>% "
+"0","  mutate(tailnum = ifelse(is.na(tailnum), ""ABCXYZ"", tailnum))"

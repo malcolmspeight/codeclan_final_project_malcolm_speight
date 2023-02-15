@@ -1,0 +1,7 @@
+"0","# remove outliers from the weather data"
+"0","newark_weather_clean <- newark_weather_clean %>% "
+"0","  mutate(max_wind_gust = quantile(wind_gust, 0.75) + (1.5 * IQR(wind_gust))) %>% "
+"0","  mutate(max_wind_speed = quantile(wind_speed, 0.75) + (1.5 * IQR(wind_speed))) %>% "
+"0","  filter(wind_gust <= max_wind_gust) %>% "
+"0","  filter(wind_speed <= max_wind_speed) %>% "
+"0","  select(-c(max_wind_gust, max_wind_speed))"
