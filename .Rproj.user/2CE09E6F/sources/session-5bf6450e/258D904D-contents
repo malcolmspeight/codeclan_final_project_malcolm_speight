@@ -11,6 +11,8 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ```{r, include=FALSE}
 library(tidyverse)
+library(modelr)
+library(janitor)
 ```
 
 ```{r, include=FALSE}
@@ -328,15 +330,71 @@ Let's build the model using the training set of data.
 weather_delays_mod1 <- glm(formula = delayed ~ ., data = weather_delays_train, family = binomial(link = "logit"))
 ```
 
+_Evaluating the model_
 
+```{r}
+summary(weather_delays_mod1)
+```
 
+The error regarding singularities is most likely due to multicollinearity, or a perfect linear relationship existing between two of the variables. 
 
+We can produce a correlation matrix to see this. 
 
+```{r}
+cor(weather_delays_train[, c("wind_dir", "wind_speed", "wind_gust", "visib")])
+```
+We can see that `wind_speed` and `wind_gust` are perfectly correlated. Let's drop `wind_speed` from the model and re-run it. 
 
+```{r}
+weather_delays_mod2 <- glm(formula = delayed ~ wind_dir + wind_gust + visib,
+                           family = binomial(link = "logit"),
+                           data = weather_delays_train)
+```
 
+We can get a detailed description of the model using the summary function.
 
+```{r}
+summary(weather_delays_mod2)
+```
 
+Of the weather variables, only visibility (`visib`) has a very small `p-value` denoted by Pr(>|t|) and is statistically significant (indicated by the 3-stars) as a predictor of flight delays. 
 
+The coefficient of `visib` is quoted in log-odds. For every unit increase in the value of `visib`, the log-odds of `delayed` being `TRUE` changes by -0.08964. In terms of odds, we have to exponeniate the coefficient as follows:
+
+```{r}
+exp(coef(weather_delays_mod2)["visib"])
+```
+
+Assuming all other factors are held constant, this value is interpreted as the odds of a flight being delayed decrease by 0.9142625 for each additional mile of visibility gained. 
+
+_Predictive accuracy_
+We need to assess the preformance of our model (which is based on training data) in predicting the dependent or response variable for observations in the test data set. 
+
+```{r}
+# add predictions to test data set
+weather_delays_test_and_pred <- weather_delays_test %>% 
+  add_predictions(weather_delays_mod2, type = "response")
+
+# convert predictions to TRUE/FALSE assuming a threshold of 0.5
+threshold <- 0.5
+weather_delays_test_and_pred <- weather_delays_test_and_pred %>% 
+  mutate(pred_thresh_0.5 = pred >= threshold)
+
+head(weather_delays_test_and_pred)
+```
+
+```{r}
+conf_table_weather_delays <- weather_delays_test_and_pred %>% 
+  tabyl(delayed, pred_thresh_0.5)
+
+conf_table_weather_delays
+```
+
+The correct predictions of the model are top left and bottom right of the table. 
+
+The model correctly predicted "no delay" (`FALSE`) for 16397 observations in the test set and "delay" for 567. That is, True Positives = 16397, whilst True Negatives = 567.
+
+The accuracy of the `weather_delays` model = (16397 + 567) / 27696 = 61.25%
 
 
 

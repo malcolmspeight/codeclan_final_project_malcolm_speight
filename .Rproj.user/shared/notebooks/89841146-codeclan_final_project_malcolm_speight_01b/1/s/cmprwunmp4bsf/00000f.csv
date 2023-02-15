@@ -1,0 +1,3 @@
+"0","weather_delays_mod2 <- glm(formula = delayed ~ wind_dir + wind_gust + visib,"
+"0","                           family = binomial(link = ""logit""),"
+"0","                           data = weather_delays_train)"
