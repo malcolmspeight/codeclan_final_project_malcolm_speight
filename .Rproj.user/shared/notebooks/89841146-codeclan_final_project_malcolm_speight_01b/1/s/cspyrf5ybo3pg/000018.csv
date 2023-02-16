@@ -1,0 +1,3 @@
+"0","plane_data_clean <- plane_data %>% "
+"0","  select(tailnum, year, engines, seats, engine) %>% "
+"0","  drop_na()"

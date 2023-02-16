@@ -30,9 +30,9 @@ newark_flights <- inner_join(flights_data, airports_data, by = c("origin" = "faa
 ```{r}
 # measures of busy-ness in newark flights data
 newark_flights <- newark_flights %>% 
-  group_by(time_hour) %>% 
-  mutate(departures_in_hour = n()) %>% 
-  ungroup()
+group_by(time_hour) %>% 
+mutate(departures_in_hour = n()) %>% 
+ungroup()
 
 newark_flights <- newark_flights %>% 
   group_by(date) %>% 

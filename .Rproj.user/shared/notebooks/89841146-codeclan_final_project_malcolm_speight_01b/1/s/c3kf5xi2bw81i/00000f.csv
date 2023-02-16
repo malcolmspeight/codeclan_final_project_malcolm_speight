@@ -1,0 +1,3 @@
+"0","newark_other_delays <- "
+"0","  inner_join(newark_flights_clean, plane_data_clean, by = ""tailnum"") %>% "
+"0","  select(-date, -tailnum) # remove unwanted variables"

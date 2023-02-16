@@ -1,0 +1,6 @@
+"0","# remove outliers from departures_in_day"
+"0","newark_flights_clean <- newark_flights_clean %>% "
+"0","  mutate(min_departures_in_day = quantile(departures_in_day, 0.75) - "
+"0","           (1.5 * IQR(departures_in_day))) %>% "
+"0","  filter(departures_in_day >= min_departures_in_day) %>% "
+"0","  select(-c(min_departures_in_day))"

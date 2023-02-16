@@ -1,0 +1,2 @@
+"0","plane_data_clean <- plane_data_clean %>% "
+"0","  select(-year)"

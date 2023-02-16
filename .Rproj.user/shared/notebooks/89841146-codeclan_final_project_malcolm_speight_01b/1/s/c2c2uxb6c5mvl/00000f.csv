@@ -1,8 +1,7 @@
-"0","exp(coef(weather_delays_mod2)[""visib""])
-"
+"0","exp(coef(weather_delays_mod2)[""visib""])"
 "1","    visib "
 "1","
 "
-"1","0.9142625 "
+"1","0.9166833 "
 "1","
 "
