@@ -1,0 +1,2 @@
+"0","newark_cancelled_clean <- newark_cancelled %>% "
+"0","  select(-dep_delay)"

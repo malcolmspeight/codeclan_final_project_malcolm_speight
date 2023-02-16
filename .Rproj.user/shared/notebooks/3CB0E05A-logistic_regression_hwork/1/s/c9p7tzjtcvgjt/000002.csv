@@ -1,0 +1,6 @@
+"0","```r
+alias(purchase ~., data = juice)
+```"
+"1","Warning: NAs introduced by coercionError in lm.fit(x, y, offset = offset, singular.ok = singular.ok, ...) : 
+  NA/NaN/Inf in 'y'
+"

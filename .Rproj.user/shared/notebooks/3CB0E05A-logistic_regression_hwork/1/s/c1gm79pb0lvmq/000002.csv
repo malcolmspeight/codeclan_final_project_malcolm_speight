@@ -1,0 +1,16 @@
+"0","```r
+juice_purchase_price_mm <- glm(purchase_mm ~ price_mm, data = juice, family = binomial(link = \"logit\"))
+
+juice_data_with_price_mm <- juice %>% 
+  add_predictions(juice_purchase_price_mm, type = \"response\")
+
+juice_purchase_loyal_ch <- glm(purchase_mm ~ loyal_ch, data = juice, family = binomial(link = \"logit\"))
+
+juice_data_with_loyal_ch <- juice %>% 
+  add_predictions(juice_purchase_loyal_ch, type = \"response\")
+
+juice_purchase_disc_mm <- glm(purchase_mm ~ disc_mm, data = juice, family = binomial(link = \"logit\"))
+
+juice_data_with_disc_mm <- juice %>% 
+  add_predictions(juice_purchase_disc_mm, type = \"response\")
+```"

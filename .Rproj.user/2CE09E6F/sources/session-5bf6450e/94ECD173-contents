@@ -1,0 +1,85 @@
+---
+title: "Untitled"
+author: "Malcolm Speight"
+date: "2023-02-16"
+output: html_document
+---
+
+```{r}
+glimpse(newark_flights)
+```
+
+```{r}
+newark_cancelled <- newark_flights
+
+colSums(is.na(newark_cancelled))
+```
+```{r}
+newark_cancelled_clean <- newark_cancelled %>% 
+  select(-dep_delay)
+```
+
+```{r}
+newark_cancelled_clean <- newark_cancelled_clean %>% 
+  mutate(tailnum = ifelse(is.na(tailnum), "ABCXYZ", tailnum))
+```
+
+```{r}
+colSums(is.na(newark_cancelled_clean))
+```
+
+```{r}
+newark_cancelled_clean <- newark_cancelled_clean %>% 
+  mutate(cancelled = ifelse(is.na(air_time), TRUE, FALSE)) %>% 
+  select(-air_time) 
+```
+
+```{r}
+# measures of busy-ness in newark flights data
+newark_cancelled_clean <- newark_cancelled_clean %>% 
+  mutate(date = as.Date(time_hour)) %>% 
+  group_by(date) %>% 
+  mutate(departures_in_day = n()) %>% 
+  ungroup()
+
+newark_cancelled_clean <- newark_cancelled_clean %>% 
+  group_by(time_hour) %>% 
+  mutate(departures_in_hour = n()) %>% 
+  ungroup()
+```
+
+```{r}
+glimpse(newark_cancelled_clean)
+```
+
+_Outliers_
+Logistic regression is intolerant to outliers in the data. 
+
+Dealing first with the `newark_cancelled` dataset. 
+
+```{r}
+# remove outliers from flights data
+newark_cancelled_clean <- newark_cancelled_clean %>% 
+  mutate(max_distance = quantile(distance, 0.75) + (1.5 * IQR(distance))) %>% 
+  mutate(min_departures_in_day = quantile(departures_in_day, 0.75) - 
+           (1.5 * IQR(departures_in_day))) %>% 
+  filter(distance <= max_distance) %>% 
+  filter(departures_in_day >= min_departures_in_day) %>% 
+  select(-c(max_distance, min_departures_in_day))
+```
+
+
+_Join cancelled to weather and plane data_
+
+```{r}
+newark_cancelled_weather <- 
+  inner_join(newark_cancelled_clean, newark_weather_clean, by = "time_hour") %>% 
+  select(-date, -time_hour) # remove unwanted variables
+
+newark_cancelled_weather_other <- 
+  inner_join(newark_cancelled_weather, plane_data_clean, by = "tailnum") %>% 
+  select(-tailnum) # remove unwanted variables
+```
+
+
+

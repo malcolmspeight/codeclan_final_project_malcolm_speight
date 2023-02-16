@@ -1,0 +1,11 @@
+"0","newark_cancelled_weather <- 
+  inner_join(newark_cancelled_clean, newark_weather_clean, by = ""time_hour"") %>% 
+  select(-date, -timehour)
+"
+"1","[1m[33mError[39m in `select()`:[22m
+[33m![39m Can't subset columns that don't exist.
+[31m✖[39m Column `timehour` doesn't exist.
+Backtrace:
+[90m 1. [39m... %>% select(-date, -timehour)
+[90m 3. [39m[1m[94mdplyr:::select.data.frame([39m[22m., -date, -timehour[1m[94m)[39m[22m
+"

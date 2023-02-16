@@ -1,0 +1,15 @@
+"0","```r
+# NA values
+colSums(is.na(juice))
+```"
+"1","       purchase weekof_purchase        store_id        price_ch 
+              0               0               0               0 
+       price_mm         disc_ch         disc_mm      special_ch 
+              0               0               0               0 
+     special_mm        loyal_ch   sale_price_mm   sale_price_ch 
+              0               0               0               0 
+     price_diff          store7     pct_disc_mm     pct_disc_ch 
+              0               0               0               0 
+list_price_diff           store 
+              0               0 
+"

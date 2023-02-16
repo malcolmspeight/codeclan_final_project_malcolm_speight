@@ -1,0 +1,32 @@
+"0","```r
+# only use those variables that are stat significant from above model
+juice_purchase_model <- glm(purchase_mm ~ price_mm + loyal_ch + disc_mm, data = juice, family = binomial(link = \"logit\"))
+
+summary(juice_purchase_model)
+```"
+"1","
+Call:
+glm(formula = purchase_mm ~ price_mm + loyal_ch + disc_mm, family = binomial(link = \"logit\"), 
+    data = juice)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.5283  -0.6033  -0.2550   0.5517   2.7836  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)   6.2461     1.2336   5.063 4.12e-07 ***
+price_mm     -1.8108     0.5884  -3.077  0.00209 ** 
+loyal_ch     -6.2561     0.3744 -16.711  < 2e-16 ***
+disc_mm       2.4509     0.3942   6.217 5.08e-10 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1430.85  on 1069  degrees of freedom
+Residual deviance:  870.84  on 1066  degrees of freedom
+AIC: 878.84
+
+Number of Fisher Scoring iterations: 5
+"

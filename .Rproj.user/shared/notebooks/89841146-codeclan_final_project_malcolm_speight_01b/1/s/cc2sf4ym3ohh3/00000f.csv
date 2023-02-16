@@ -1,0 +1,12 @@
+"0","# class distribution in training set"
+"0","round(prop.table(table(select(cancelled_train, cancelled), exclude = NULL)), 3) * 100 "
+"1","cancelled
+"
+"1","FALSE "
+"1"," TRUE "
+"1","
+"
+"1"," 97.7 "
+"1","  2.3 "
+"1","
+"

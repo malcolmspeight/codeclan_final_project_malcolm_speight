@@ -1,0 +1,42 @@
+"0","```r
+juice_purchase_model <- glm(purchase_mm ~., data = juice, family = binomial(link = \"logit\"))
+
+summary(juice_purchase_model)
+```"
+"1","
+Call:
+glm(formula = purchase_mm ~ ., family = binomial(link = \"logit\"), 
+    data = juice)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.7518  -0.5413  -0.2306   0.5265   2.8005  
+
+Coefficients:
+                 Estimate Std. Error z value Pr(>|z|)    
+(Intercept)       4.90958    2.08163   2.359  0.01835 *  
+weekof_purchase  -0.01123    0.01137  -0.988  0.32320    
+store_id2        -0.04713    0.29067  -0.162  0.87119    
+store_id3        -0.21282    0.39069  -0.545  0.58595    
+store_id4        -0.53164    0.41906  -1.269  0.20456    
+store_id7        -0.64787    0.28809  -2.249  0.02453 *  
+price_ch          4.56495    1.88740   2.419  0.01558 *  
+price_mm         -3.68490    0.91548  -4.025 5.69e-05 ***
+disc_ch          11.27171   18.82388   0.599  0.54931    
+disc_mm          25.44305    9.31290   2.732  0.00629 ** 
+special_chYes     0.26336    0.34304   0.768  0.44265    
+special_mmYes     0.31350    0.27586   1.136  0.25576    
+loyal_ch         -6.24874    0.41040 -15.226  < 2e-16 ***
+pct_disc_mm     -48.55687   19.50068  -2.490  0.01277 *  
+pct_disc_ch     -28.26083   35.57517  -0.794  0.42696    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1430.85  on 1069  degrees of freedom
+Residual deviance:  816.25  on 1055  degrees of freedom
+AIC: 846.25
+
+Number of Fisher Scoring iterations: 5
+"
