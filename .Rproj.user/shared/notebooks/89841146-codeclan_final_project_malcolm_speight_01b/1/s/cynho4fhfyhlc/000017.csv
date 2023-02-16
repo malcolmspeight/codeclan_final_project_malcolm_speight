@@ -1,0 +1,6 @@
+"0","newark_flights <- newark_flights %>% "
+"0","  select(-c(name, lat, lon, alt, tz, dst, tzone, origin)) %>% "
+"0","  select(-c(year, day, minute)) %>% "
+"0","  select(-c(dep_time, sched_dep_time, arr_time, sched_arr_time, arr_delay)) %>% "
+"0","  select(-flight) %>% "
+"0","  mutate(day = wday(time_hour, label = TRUE)) # new day name variable"

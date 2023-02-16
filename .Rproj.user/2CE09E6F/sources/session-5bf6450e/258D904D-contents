@@ -11,8 +11,10 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ```{r, include=FALSE}
 library(tidyverse)
+library(lubridate)
 library(modelr)
 library(janitor)
+library(car)
 ```
 
 ```{r, include=FALSE}
@@ -48,16 +50,28 @@ The `newark_flights` data contains 26 variables with 115,968 observations.
 glimpse(newark_flights)
 ```
 
-Some of the data is superfluous and is repeated for each entry so we can remove details of Newark Airport such as the `name` and `latitude` and `longitude` and the like. Also `year`, `month`, `day` are already captured within `time_hour` so can be removed. Also captured by `time_hour` are `dep_time`, `sched_dep_time` and `hour`. The `minute` variable is superfluous. The arrival times, both scheduled and actual, and arrival delay are not predictor variables as they are a consequence of any delay so can be removed also. 
+Some of the data is superfluous and is repeated for each entry so we can remove details of Newark Airport such as the `name` and `latitude` and `longitude` and the like (`alt`, `tz`, `dst`, `tzone`, `origin`). 
+
+Instead of the day number represented by `day`, it might be beneficial to include a variable for the the day name to capture the days of the week. This can be extracted from `time_hour`.
+
+As such the current `day` variable should be removed as should `year` as each observation is for the same year.
+
+The `hour` variable captures sufficient information about the scheduled departure time so `dep_time` can be removed as can `sched_dep_time`. The `minute` variable is also superfluous. 
+
+The arrival times, both scheduled and actual, and arrival delay are not predictor variables as they are a consequence of any delay on departure so can be removed. 
+
+The flight number (`flight`) also does not have a predictive quality. It doesn't describe the departure or the circumstances at the time of departure, so should be removed. 
 
 ```{r}
 newark_flights <- newark_flights %>% 
   select(-c(name, lat, lon, alt, tz, dst, tzone, origin)) %>% 
-  select(-c(year, month, day, hour, minute)) %>% 
-  select(-c(dep_time, sched_dep_time, arr_time, sched_arr_time, arr_delay))
+  select(-c(year, day, minute)) %>% 
+  select(-c(dep_time, sched_dep_time, arr_time, sched_arr_time, arr_delay)) %>% 
+  select(-flight) %>% 
+  mutate(day = wday(time_hour, label = TRUE)) # new day name variable
 ```
 
-We reduce the number of variables from 26 to 8.
+We reduce the number of variables from 26 to 10.
 
 ```{r}
 glimpse(newark_flights)
@@ -192,6 +206,7 @@ There are now no missing values within the newark_weather dataset.
 ```{r}
 colSums(is.na(newark_weather_clean))
 ```
+
 For the retained variables there has been no loss of data - there are still 8,735 observations. 
 
 ```{r}
@@ -213,7 +228,7 @@ newark_flights_clean %>%
   facet_wrap(~ key, scales = "free") + 
   theme_minimal()
 ```
-There is a skew in all the numerical data within the flights dataset. This can be resolved by removing any value that is larger (right skew) or less than (left skew) 1.5 times the interquartile range (IQR). Quartiles divide an ordered set of values in to four equal parts. The IQR of a set of values is the difference between the values for the first quartile (Q1) and the third quartile (Q3). The value for Q1 is the middle number between the smallest number and the median whilst the Q3 value is the middle number between the median and the highest number. 
+There is a skew in both the `air_time` and `distance` data within the flights dataset. This can be resolved by removing any value that is larger (right skew) or less than (left skew) 1.5 times the interquartile range (IQR). Quartiles divide an ordered set of values in to four equal parts. The IQR of a set of values is the difference between the values for the first quartile (Q1) and the third quartile (Q3). The value for Q1 is the middle number between the smallest number and the median whilst the Q3 value is the middle number between the median and the highest number. 
 
 
 ```{r}
@@ -253,7 +268,8 @@ newark_weather_clean %>%
   facet_wrap(~ key, scales = "free") + 
   theme_minimal()
 ```
-Wind direction (`wind_dir`) is not skewed so we will retain all of those observations. Visibility (`visib`) has a limited range of values and so will be excluded from quantile reduction. For the remainder we will remove those values more than 1.5 times the IQR (or less than in the case of visibility).
+
+Wind direction (`wind_dir`) is not skewed so we will retain all of those observations. Visibility (`visib`) has a limited range of values and so will be excluded from quantile reduction. For the `wind_speed` and `wind_gust` we will remove those values more than 1.5 times the IQR (or less than in the case of visibility).
 
 ```{r}
 # remove outliers from the weather data
@@ -286,7 +302,7 @@ newark_weather_delays <-
   select(delayed, wind_dir, wind_speed, wind_gust, visib)
 ```
 
-The inner join results in a loss of 5,186 observations from the original newark_flights dataset of 115,968 or a 1% loss in data. 
+The inner join results in a loss of 1,204 observations from the newark_flights_clean dataset of 111,986 or a 1% loss in data. 
 
 _Splitting the dataset_
 We want to create a training set of data for our model which we can then test on the remaining data, the test set.
@@ -357,15 +373,15 @@ We can get a detailed description of the model using the summary function.
 summary(weather_delays_mod2)
 ```
 
-Of the weather variables, only visibility (`visib`) has a very small `p-value` denoted by Pr(>|t|) and is statistically significant (indicated by the 3-stars) as a predictor of flight delays. 
+Of the weather variables, visibility (`visib`) has a very small `p-value` denoted by Pr(>|t|) and is statistically significant (indicated by the 3-stars) as a predictor of flight delays. Also `wind_gust` is statistically signicant at the 5% level. 
 
-The coefficient of `visib` is quoted in log-odds. For every unit increase in the value of `visib`, the log-odds of `delayed` being `TRUE` changes by -0.08964. In terms of odds, we have to exponeniate the coefficient as follows:
+The coefficient of each variable is quoted in log-odds. For every unit increase in the value of `visib`, the log-odds of `delayed` being `TRUE` changes by -0.08871. In terms of odds, we have to exponeniate the coefficient as follows:
 
 ```{r}
 exp(coef(weather_delays_mod2)["visib"])
 ```
 
-Assuming all other factors are held constant, this value is interpreted as the odds of a flight being delayed decrease by 0.9142625 for each additional mile of visibility gained. 
+Assuming all other factors are held constant, this value is interpreted as the odds of a flight being delayed decrease by 0.9151078 for each additional mile of visibility gained. 
 
 _Predictive accuracy_
 We need to assess the preformance of our model (which is based on training data) in predicting the dependent or response variable for observations in the test data set. 
@@ -379,8 +395,6 @@ weather_delays_test_and_pred <- weather_delays_test %>%
 threshold <- 0.5
 weather_delays_test_and_pred <- weather_delays_test_and_pred %>% 
   mutate(pred_thresh_0.5 = pred >= threshold)
-
-head(weather_delays_test_and_pred)
 ```
 
 ```{r}
@@ -392,9 +406,9 @@ conf_table_weather_delays
 
 The correct predictions of the model are top left and bottom right of the table. 
 
-The model correctly predicted "no delay" (`FALSE`) for 16397 observations in the test set and "delay" for 567. That is, True Positives = 16397, whilst True Negatives = 567.
+The model correctly predicted "no delay" (`FALSE`) for 16449 observations in the test set and "delay" for 505. That is, True Positives = 16449, whilst True Negatives = 505.
 
-The accuracy of the `weather_delays` model = (16397 + 567) / 27696 = 61.25%
+The accuracy of the `weather_delays` model = (16449 + 505) / 27696 = 61%
 
 
 _Other factors impacting delays_
@@ -456,6 +470,7 @@ plane_data_clean <- plane_data_clean %>%
   mutate(age = 2017 - year)
 ```
 
+
 Look for outliers in `plane_data_clean`: 
 
 ```{r, message=FALSE}
@@ -467,21 +482,21 @@ plane_data_clean %>%
   facet_wrap(~ key, scales = "free") + 
   theme_minimal()
 ```
-There is a discrepancy in `age`.
+
+There are discrepancies in `age` and `year`.
 
 ```{r}
 plane_data_clean %>% 
   slice_max(age, n = 5)
 ```
-
-There is a zero value rather than a missing value. We need to remove this. 
+There is a zero value rather than a missing value in `year`. We need to remove this. 
 
 ```{r}
 plane_data_clean <- plane_data_clean %>% 
   filter(year != 0)
 ```
 
-
+The range of the variables becomes more normal. 
 
 ```{r, message=FALSE}
 plane_data_clean %>% 
@@ -492,12 +507,14 @@ plane_data_clean %>%
   facet_wrap(~ key, scales = "free") + 
   theme_minimal()
 ```
+
 We can now remove `year` from `plane_data_clean`.
 
 ```{r}
 plane_data_clean <- plane_data_clean %>% 
   select(-year)
 ```
+
 
 _Measure of busy-ness_
 We should look to capture a measure of busy-ness in the flights data. How many flights are taking off that day? That hour?
@@ -527,6 +544,8 @@ newark_flights_clean %>%
   facet_wrap(~ key, scales = "free") + 
   theme_minimal()
 ```
+
+`departures_in_day` is skewed left so we should reduce the range of values in this variable. 
 
 ```{r}
 # remove outliers from departures_in_day
@@ -561,15 +580,16 @@ newark_other_delays <-
 
 We lose 7,802 observations with the inner join on the plane data, down to 83,709.
 
-Combine this with `visib` from the weather data. 
+Combine this with `visib` and `wind_gust` from the weather data. 
 
 ```{r}
 newark_other_delays <-
   inner_join(newark_other_delays, newark_weather_clean, by = "time_hour") %>% 
-  select(-c(wind_dir, wind_speed, wind_gust)) # remove unwanted weather variables and keep visib
+  select(-c(wind_dir, wind_speed, time_hour)) # remove unwanted weather variables 
 ```
 
 We lose another 750 observations, down to 82959.
+
 
 _Splitting the dataset_
 Again, we want to create a training set of data for our model which we can then test on the remaining data, the test set.
@@ -605,6 +625,7 @@ round(prop.table(table(select(other_delays_test, delayed), exclude = NULL)), 3) 
 
 Again there is a slight class imbalance in the training data set. The imbalance is not massively significant so we will continue but make a note for further model development in the future. 
 
+
 *Training the model*
 
 Let's build the model using the training set of data. 
@@ -618,4 +639,71 @@ _Evaluating the model_
 ```{r}
 summary(other_delays_mod1)
 ```
+_Improving the model_
+
+The `NAs` returned for `distance` indicate that multicollinearity exists in the model. That is, two or more predictor variables are highly (or perfectly) correlated. We can generate a correlation matrix to see the inter-relationship of the numerical variables. In this instance it is likely that there is a high correlation between `distance` and `air_time`.
+
+```{r}
+other_delays_train %>% 
+  select(air_time, distance) %>% 
+  cor()
+```
+
+The correlation between the two variables is very strong (0.99). We should remove one of them from the model. 
+
+Whilst the correlation matrix can be used for numerical variables we must also consider if there are any aliased variables in the model. Again, this is another measure of correlation between variables.  
+
+```{r}
+alias(other_delays_mod1)
+```
+
+It's clear that `distance` and `dest` are also highly correlated, which makes sense. 
+
+Let's remove `air_time` and `dest` but retain `distance` which is a more intuitive and accurate measure of length or duration, and rebuild the model. 
+
+```{r}
+other_delays_mod2 <- glm(formula = delayed ~ carrier + distance + hour + day +
+                           departures_in_day + departures_in_hour + engines + seats +
+                           engine + age + wind_gust + visib, 
+                         data = other_delays_train, family = binomial(link = "logit"))
+```
+
+```{r}
+summary(other_delays_mod2)
+```
+We can test the collinearity of variables in the model using the `vif` function from the `car` package.
+
+```{r}
+vif(other_delays_mod2)
+```
+VIF stands for variance inflation factor and is useful to identify correlation where it may exist between three or more variables rather than just between pairs. 
+
+A VIF of 5 or more indicates the presence of multicollinearity. We can see that `carrier` and `engine` both have values in excess of 5 and should be removed from the model. 
+
+Reviewing the summary statistics of the model shows that `hour`, `day`, `departures_in_day`, `departures_in_hour`, `seats`, `age`, `wind_gust` and `visib` are statistically significant predictor variables. Whilst `carrier` is significant it fails the VIF test and is removed. 
+
+```{r}
+other_delays_mod3 <- glm(formula = delayed ~ hour + day + departures_in_day +
+                           departures_in_hour + seats + age + wind_gust + visib, 
+                         data = other_delays_train, family = binomial(link = "logit"))
+```
+
+```{r}
+summary(other_delays_mod3)
+```
+
+We note that `age` is not statistically significant, so another iteration of the model is required to remove this predictor variable. 
+
+```{r}
+other_delays_mod3 <- glm(formula = delayed ~ hour + day + departures_in_day +
+                           departures_in_hour + seats + wind_gust + visib, 
+                         data = other_delays_train, family = binomial(link = "logit"))
+```
+
+```{r}
+summary(other_delays_mod3)
+```
+
+
+
 

@@ -1,3 +1,3 @@
 "0","newark_other_delays <-"
 "0","  inner_join(newark_other_delays, newark_weather_clean, by = ""time_hour"") %>% "
-"0","  select(-c(wind_dir, wind_speed, wind_gust)) # remove unwanted weather variables and keep visib"
+"0","  select(-c(wind_dir, wind_speed, time_hour)) # remove unwanted weather variables "
