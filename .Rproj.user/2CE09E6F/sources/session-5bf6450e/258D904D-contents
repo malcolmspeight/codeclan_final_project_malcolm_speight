@@ -5,7 +5,7 @@ date: "2023-02-13"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, echo=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
@@ -28,6 +28,94 @@ weather_data <- read_csv("data/weather.csv") %>%
 plane_data <- read_csv("data/planes.csv") %>% 
   janitor::clean_names()
 ```
+
+
+## Context
+
+### BI and data-driven decision making
+
+NEED TO POPULATE THIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+### Domain knowledge and the business context
+
+
+I received a data set from Newark Liberty International Airport (IATA airport code "EWR") which captures departing flights from EWR in the year 2017. 
+
+The airport is located 10 miles south-west of New York City (NYC) and is one of three international airports serving NYC, along with La Guardia and JFK airports. Of the three, EWR is the second busiest. In 2017 over 43 million passengers traveled through the airport compared to 55 million at JFK and 30 million at La Guardia.
+
+In addition to 2017 flight departures, datasets relating to airports, airlines, planes and weather records for all three NYC airports were provided to me.  
+
+Newark Airport believe poor weather conditions are causing too many delays to departing flights. They wish to ascertain if this assumption is correct and if it is, they are willing improve facilities at the airport to reduce the impact of weather related delays if possible. 
+
+As such I have been asked by Newark Airport to use the data provided to answer the following business questions:
+
+- what effect does the weather have on flight departure delays?
+- how serious weather related delays are?
+- what types of weather impacts delays the most?
+- what other factors impact delays?
+- rank the importance of delay factors.
+- compare delays at Newark Airport to the other NYC airports.
+
+
+## Data
+
+
+### Internal and external data sources
+
+**Internal data**
+Five data sets were provided to me by Newark Airport:
+
+*flights* - contained various data points all relating to flights departing the three NYC international airports during 2017. Examples of data points include departure date, departure time, arrival time, departure delay, flight number, distance between origin and destination airports. 
+
+*airports* - details of over 1,300 airports in the USA including their IATA airport code, latitude and longitude. 
+
+*airlines* - the carrier name and code of 12 airlines
+
+*planes* - details of over 3,500 aeroplanes listing amongst other things their tail number (unique identifier), year of manufacture and seat numbers (capacity)
+
+*weather* - weather data for all three NYC international airports in 2017. 
+
+
+**External data**
+Despite an extensive internet search I could not find free access to hourly weather data for Newark Airport and so was unable to supplement the data set provided to me. 
+
+
+### Types of data
+
+The datasets provided contain date-time, numerical and character data types.
+
+The date-time data type `<dttm>` contains a date plus a time. These are used for the `time_hour` variables in the data set which records the date and hour of flight departures and weather recordings. 
+
+All of the numeric variables are of type double (or `<dbl>`) which is the default treatment for numbers and is able to store numbers as decimals. This is appropriate for the longitude, latitude and wind speed variables which are continuous in nature but isn't really required for any of the other numerical variables (e.g. the year a plane was manufactured or how many engines it has) which could have been classed as `integer`.
+
+Character variables `<chr>` capture letters, words and can even contain whole sentences. As an example, they were used in this dataset to capture amongst other things, the airline name (`airline`) and tail number (`tailnum`) of the departing plane. 
+
+Logical variables (`<lgl>`) are a categorical variable used to represent boolean values in R. They can only take the value of 'TRUE' or 'FALSE'. 
+
+Factor variables (`<fct>`) are also a form of categorical variable. They can capture data which cannot be ranked or ordered (nominal data) such gender. They can also be used to capture values which have a natural order to them such as 'clothing size' or 'film rating'.  
+
+I used both logical and factor variables in my analysis to capture boolean values. 
+
+
+### Data formats
+
+All the data sets used in this analysis were provided by Newark Airport. Each file was in a `csv` format.
+
+
+### Data quality and bias
+
+
+## Ethics
+
+### Ethical issues in data sourcing and extraction
+
+
+### Ethical implications of business requirements
+
+
+## Analysis
 
 
 *Logistic regression*

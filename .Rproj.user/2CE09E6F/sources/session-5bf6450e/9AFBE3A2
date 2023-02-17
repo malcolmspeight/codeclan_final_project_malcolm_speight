@@ -1,27 +1,28 @@
 {
-    "id": "94ECD173",
+    "id": "9AFBE3A2",
     "path": null,
     "project_path": null,
     "type": "r_markdown",
     "hash": "0",
     "contents": "",
     "dirty": true,
-    "created": 1676568408054.0,
+    "created": 1676655112980.0,
     "source_on_save": false,
-    "relative_order": 5,
+    "relative_order": 3,
     "properties": {
         "tempName": "Untitled1",
+        "chunk_output_type": "inline",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "85,0",
-        "scrollLine": "77"
+        "cursorPosition": "15,0",
+        "scrollLine": "13"
     },
     "folds": "",
     "lastKnownWriteTime": 0,
     "encoding": "",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1676570942912,
+    "last_content_update": 1676655285024,
     "read_only": false,
     "read_only_alternatives": []
 }
