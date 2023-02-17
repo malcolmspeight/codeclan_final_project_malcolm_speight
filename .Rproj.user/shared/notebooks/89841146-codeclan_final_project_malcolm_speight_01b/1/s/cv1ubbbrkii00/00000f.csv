@@ -1,5 +1,5 @@
 "0","# class distribution in original dataset"
-"0","round(prop.table(table(select(newark_cancelled_weather_other_ROSE, cancelled), exclude = NULL)), 3) * 100 "
+"0","round(prop.table(table(select(newark_cancelled_weather_other, cancelled), exclude = NULL)), 3) * 100 "
 "1","cancelled
 "
 "1","FALSE "

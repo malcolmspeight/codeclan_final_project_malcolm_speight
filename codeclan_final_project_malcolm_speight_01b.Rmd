@@ -15,6 +15,7 @@ library(lubridate)
 library(modelr)
 library(janitor)
 library(car)
+library(ROSE)
 ```
 
 ```{r, include=FALSE}
@@ -812,38 +813,83 @@ newark_cancelled_weather_other <-
 
 
 _Splitting the dataset_
-Again, we want to create a training set of data for our model which we can then test on the remaining data, the test set.
-
-```{r}
-# number of rows of data in newark_cancelled_weather_other dataset
-rows = nrow(newark_cancelled_weather_other)
-
-# create a training set
-sample_set <- sample(rows, rows * 0.75, replace = FALSE)
-cancelled_train <- newark_cancelled_weather_other[sample_set,]
-
-# create a test set
-cancelled_test <- newark_cancelled_weather_other[-sample_set,]
-```
-
-We want to make sure that the class distribution of the data in the samples mimics that of the original data set. 
+Again, we want to create a training set of data for our model which we can then test on the remaining data, the test set. First let's examine the class imbalance in the full dataset.
 
 ```{r}
 # class distribution in original dataset
 round(prop.table(table(select(newark_cancelled_weather_other, cancelled), exclude = NULL)), 3) * 100 
 ```
 
+It is highly imbalanced. This needs correcting before we proceed to building a model. 
+
+To correct the imbalance, the `ROSE` package (Random Over-Sampling Examples) requires that variables are either categorical (`as.factor`) or continuous numeric. To achieve this variables with `chr` data types need to be removed and all other variables converted to either `dbl` or `fct`.
+
+```{r}
+newark_cancelled_weather_other_ROSE <- newark_cancelled_weather_other %>% 
+  mutate(month = as.numeric(month),
+         day = case_when(
+           day == "Mon" ~ 1, 
+           day == "Tue" ~ 2, 
+           day == "Wed" ~ 3, 
+           day == "Thu" ~ 4,
+           day == "Fri" ~ 5,
+           day == "Sat" ~ 6,
+           day == "Sun" ~ 7
+         ),
+         cancelled = as.factor(cancelled),
+         departures_in_day = as.numeric(departures_in_day),
+         departures_in_hour = as.numeric(departures_in_hour)
+         ) %>% 
+  select(-c(carrier, dest, engine))
+```
+
+We then need to split this ROSE compatible dataset into a training and test set of data.  
+
+```{r}
+# number of rows of data in newark_cancelled_weather_other dataset
+rows = nrow(newark_cancelled_weather_other_ROSE)
+
+# create a training set
+sample_set <- sample(rows, rows * 0.75, replace = FALSE)
+cancelled_train <- newark_cancelled_weather_other_ROSE[sample_set,]
+
+# create a test set
+cancelled_test <- newark_cancelled_weather_other_ROSE[-sample_set,]
+```
+
+
+Again the class distribution of the original data set is as follows: 
+
+```{r}
+# class distribution in original dataset
+round(prop.table(table(select(newark_cancelled_weather_other_ROSE, cancelled), exclude = NULL)), 3) * 100 
+```
+
+The class distribution of the training set will reflect this. 
+
 ```{r}
 # class distribution in training set
 round(prop.table(table(select(cancelled_train, cancelled), exclude = NULL)), 3) * 100 
 ```
+
+Let's use the ROSE package to over-sample the minority class (`TRUE`) and balance the training set. 
+
+```{r}
+cancelled_train_ROSE <- ROSE(cancelled ~., data = cancelled_train, seed = 1)$data
+# class distribution in training set
+round(prop.table(table(select(cancelled_train_ROSE, cancelled), exclude = NULL)), 3) * 100 
+```
+
+This is a well balanced training data set. 
+
+The test set will still reflect the make-up of the original dataset. 
 
 ```{r}
 # class distribution in test set
 round(prop.table(table(select(cancelled_test, cancelled), exclude = NULL)), 3) * 100 
 ```
 
-There is a significant class imbalance in the training data set. The imbalance is not massively significant so we will continue but make a note for further model development in the future. 
+
 
 
 
