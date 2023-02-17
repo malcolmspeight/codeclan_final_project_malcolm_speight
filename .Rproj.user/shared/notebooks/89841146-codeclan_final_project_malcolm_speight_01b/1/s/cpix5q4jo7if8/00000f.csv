@@ -1,0 +1,1 @@
+"0","cancelled_flights_mod1 <- glm(formula = cancelled ~ ., data = cancelled_train_ROSE, family = binomial(link = ""logit""))"

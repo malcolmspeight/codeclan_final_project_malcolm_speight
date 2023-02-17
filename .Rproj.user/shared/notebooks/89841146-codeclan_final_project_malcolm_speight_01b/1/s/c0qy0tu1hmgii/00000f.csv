@@ -1,0 +1,3 @@
+"0","newark_cancelled_clean <- newark_cancelled_clean %>% "
+"0","  mutate(cancelled = ifelse(is.na(air_time), TRUE, FALSE)) %>% "
+"0","  select(-air_time) "

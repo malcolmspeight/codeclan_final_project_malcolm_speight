@@ -1,0 +1,7 @@
+"0","newark_cancelled_weather <- "
+"0","  inner_join(newark_cancelled_clean, newark_weather_clean, by = ""time_hour"") %>% "
+"0","  select(-date, -time_hour) # remove unwanted variables"
+"0",""
+"0","newark_cancelled_weather_other <- "
+"0","  inner_join(newark_cancelled_weather, plane_data_clean, by = ""tailnum"") %>% "
+"0","  select(-tailnum) # remove unwanted variables"

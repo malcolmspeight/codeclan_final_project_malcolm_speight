@@ -735,34 +735,46 @@ The accuracy of the `weather_delays` model = (9830 + 4090) / 20740 = 67%
 
 *Cancelled flights model*
 
-```{r}
-glimpse(newark_flights)
-```
+As noted earlier there appears to be a number of cancelled flights in the `flights` dataset denoted by `NA` values within the `air_time` variable.
 
 ```{r}
 newark_cancelled <- newark_flights
 
 colSums(is.na(newark_cancelled))
 ```
+There would appear to be 3,266 cancelled flights. 
+
+Let's create a logistic regression model to see how well we can predict cancellations from the given data. 
+
+Firstly, we need to remove `dep_delay` as this is irrelevant to flight cancellations - a flight can't be recorded as delayed and cancelled. 
+
 ```{r}
 newark_cancelled_clean <- newark_cancelled %>% 
   select(-dep_delay)
 ```
+
+Again, I'll replace the missing values within `tailnum` with "ABCXYZ".
 
 ```{r}
 newark_cancelled_clean <- newark_cancelled_clean %>% 
   mutate(tailnum = ifelse(is.na(tailnum), "ABCXYZ", tailnum))
 ```
 
+The only missing values in the dataset should now relate to `air_time`. 
+
 ```{r}
 colSums(is.na(newark_cancelled_clean))
 ```
+
+Let's create a new variable (`cancelled`) by converting the values within `air_time` to either TRUE (`NA`) or FALSE, then remove the `air_time` variable.
 
 ```{r}
 newark_cancelled_clean <- newark_cancelled_clean %>% 
   mutate(cancelled = ifelse(is.na(air_time), TRUE, FALSE)) %>% 
   select(-air_time) 
 ```
+
+We should add a measure of busy-ness to the cancelled flights data. 
 
 ```{r}
 # measures of busy-ness in newark flights data
@@ -778,17 +790,13 @@ newark_cancelled_clean <- newark_cancelled_clean %>%
   ungroup()
 ```
 
-```{r}
-glimpse(newark_cancelled_clean)
-```
 
 _Outliers_
-Logistic regression is intolerant to outliers in the data. 
 
-Dealing first with the `newark_cancelled` dataset. 
+Logistic regression is intolerant to outliers in the data so let's remove them from the `cancelled_flights` dataset. 
 
 ```{r}
-# remove outliers from flights data
+# remove outliers from cancelled flights data
 newark_cancelled_clean <- newark_cancelled_clean %>% 
   mutate(max_distance = quantile(distance, 0.75) + (1.5 * IQR(distance))) %>% 
   mutate(min_departures_in_day = quantile(departures_in_day, 0.75) - 
@@ -799,7 +807,9 @@ newark_cancelled_clean <- newark_cancelled_clean %>%
 ```
 
 
-_Join cancelled to weather and plane data_
+_Join cancelled dataset to weather and plane data_
+
+We want to join the cleaned weather and plane datasets to the clean cancelled flights data. 
 
 ```{r}
 newark_cancelled_weather <- 
@@ -880,7 +890,7 @@ cancelled_train_ROSE <- ROSE(cancelled ~., data = cancelled_train, seed = 1)$dat
 round(prop.table(table(select(cancelled_train_ROSE, cancelled), exclude = NULL)), 3) * 100 
 ```
 
-This is a well balanced training data set. 
+This is now a well balanced training data set. 
 
 The test set will still reflect the make-up of the original dataset. 
 
@@ -890,7 +900,19 @@ round(prop.table(table(select(cancelled_test, cancelled), exclude = NULL)), 3) *
 ```
 
 
+*Training the model*
 
+Let's build the model using the training set of data. 
+
+```{r}
+cancelled_flights_mod1 <- glm(formula = cancelled ~ ., data = cancelled_train_ROSE, family = binomial(link = "logit"))
+```
+
+_Evaluating the model_
+
+```{r}
+summary(cancelled_flights_mod1)
+```
 
 
 
