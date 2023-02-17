@@ -914,6 +914,43 @@ _Evaluating the model_
 summary(cancelled_flights_mod1)
 ```
 
+All of the variables are statistically significant. 
+
+Let's test the collinearity of variables in the model using the `vif` function from the `car` package.
+
+```{r}
+vif(cancelled_flights_mod1)
+```
+
+There doesn't appear to be significant multicollinearity in the model as no VIF values are above 5.
+
+
+_Predictive accuracy_
+We need to assess the preformance of our model (which is based on training data) in predicting the dependent or response variable for observations in the test data set. 
+
+```{r}
+# add predictions to test data set
+cancelled_flights_test_and_pred <- cancelled_test %>% 
+  add_predictions(cancelled_flights_mod1, type = "response")
+
+# convert predictions to TRUE/FALSE assuming a threshold of 0.5
+threshold <- 0.5
+cancelled_flights_test_and_pred <- cancelled_flights_test_and_pred %>% 
+  mutate(pred_thresh_0.5 = pred >= threshold)
+```
+
+```{r}
+conf_table_cancelled_flights <- cancelled_flights_test_and_pred %>% 
+  tabyl(cancelled, pred_thresh_0.5)
+
+conf_table_cancelled_flights
+```
+
+The correct predictions of the model are top left and bottom right of the table. 
+
+The model correctly predicted "no delay" (`FALSE`) for 13,762 observations in the test set and "delay" for 365 That is, True Positives = 13,762, whilst True Negatives = 365
+
+The accuracy of the `cancelled_flights` model = (13,762 + 365) / 21,808 = 64%
 
 
 

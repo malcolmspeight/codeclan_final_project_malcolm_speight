@@ -1,0 +1,8 @@
+"0","# add predictions to test data set"
+"0","cancelled_flights_test_and_pred <- cancelled_test %>% "
+"0","  add_predictions(cancelled_flights_mod1, type = ""response"")"
+"0",""
+"0","# convert predictions to TRUE/FALSE assuming a threshold of 0.5"
+"0","threshold <- 0.5"
+"0","cancelled_flights_test_and_pred <- cancelled_flights_test_and_pred %>% "
+"0","  mutate(pred_thresh_0.5 = pred >= threshold)"
