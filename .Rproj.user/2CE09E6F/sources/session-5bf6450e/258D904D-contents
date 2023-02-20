@@ -30,46 +30,56 @@ plane_data <- read_csv("data/planes.csv") %>%
 ```
 
 
-## Context
 
-### BI and data-driven decision making
+
+## Context
+<br>
+
+#### BI and data-driven decision making
+<br>
 
 NEED TO POPULATE THIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+<br>
 
+#### Domain knowledge and the business context
+<br>
 
-### Domain knowledge and the business context
+I received a data set from Newark Liberty International Airport (airport code "EWR") which contains departing flights from EWR in the year 2017. 
 
-
-I received a data set from Newark Liberty International Airport (IATA airport code "EWR") which captures departing flights from EWR in the year 2017. 
-
-The airport is located 10 miles south-west of New York City (NYC) and is one of three international airports serving NYC, along with La Guardia and JFK airports. Of the three, EWR is the second busiest. In 2017 over 43 million passengers traveled through the airport compared to 55 million at JFK and 30 million at La Guardia.
+The airport is located 10 miles south-west of New York City (NYC) and is one of three international airports serving NYC, along with La Guardia and JFK airports. Of the three, EWR is the second busiest. In 2017 over 43 million passengers traveled through the airport compared to 55 million at JFK and 30 million at La Guardia. 
 
 In addition to 2017 flight departures, datasets relating to airports, airlines, planes and weather records for all three NYC airports were provided to me.  
 
-Newark Airport believe poor weather conditions are causing too many delays to departing flights. They wish to ascertain if this assumption is correct and if it is, they are willing improve facilities at the airport to reduce the impact of weather related delays if possible. 
+Newark Airport believe poor weather conditions are causing too many delays to departing flights. They wish to ascertain if this assumption is correct and if it is, they would look to improve facilities at the airport to lessen the impact of weather related delays if possible. 
+
+Delays to the departure times of airlines operating out of Newark Airport clearly have business implications for the airport. If delays persist or become endemic, passengers will choose to fly from alternative airports. So too with cargo planes. Persistent delays may see more business shift to La Guardia, JFK or to other airports on the eastern seaboard of the US. 
+
+Airport management are clearly concerned about departure delays and the causes of delay. The economic consequences of delay are significant as is reputational damage to the airport if it becomes associated with delayed flights. Social media now allows each passengers to broadcast their grievances to the world without filter. Reacting to passenger grievances after the event may be too late. It's best to manage points of conflict and inefficiency before a crises erupts. Newark airport management can be seen to be proactive in their attempts to understand the source of delays and so work to eliminate or reduce those delays where possible. 
 
 As such I have been asked by Newark Airport to use the data provided to answer the following business questions:
 
 - what effect does the weather have on flight departure delays?
-- how serious weather related delays are?
+- how serious are weather related delays?
 - what types of weather impacts delays the most?
 - what other factors impact delays?
 - rank the importance of delay factors.
 - compare delays at Newark Airport to the other NYC airports.
-
+<br>
+<br>
 
 ## Data
+<br>
 
+#### Internal and external data sources 
+<br>
 
-### Internal and external data sources
-
-**Internal data**
+**Internal data** <br>
 Five data sets were provided to me by Newark Airport:
 
-*flights* - contained various data points all relating to flights departing the three NYC international airports during 2017. Examples of data points include departure date, departure time, arrival time, departure delay, flight number, distance between origin and destination airports. 
+*flights* - contained various data points all relating to flights departing the three NYC international airports during 2017. Examples of data points include departure date, departure time, departure delay, arrival time, flight number, distance between origin and destination airports. 
 
-*airports* - details of over 1,300 airports in the USA including their IATA airport code, latitude and longitude. 
+*airports* - details of over 1,300 airports in the USA including their Federal Aviation Authority (FAA) airport code, latitude and longitude. 
 
 *airlines* - the carrier name and code of 12 airlines
 
@@ -78,11 +88,11 @@ Five data sets were provided to me by Newark Airport:
 *weather* - weather data for all three NYC international airports in 2017. 
 
 
-**External data**
+**External data** <br>
 Despite an extensive internet search I could not find free access to hourly weather data for Newark Airport and so was unable to supplement the data set provided to me. 
 
 
-### Types of data
+#### Types of data
 
 The datasets provided contain date-time, numerical and character data types.
 
@@ -90,44 +100,130 @@ The date-time data type `<dttm>` contains a date plus a time. These are used for
 
 All of the numeric variables are of type double (or `<dbl>`) which is the default treatment for numbers and is able to store numbers as decimals. This is appropriate for the longitude, latitude and wind speed variables which are continuous in nature but isn't really required for any of the other numerical variables (e.g. the year a plane was manufactured or how many engines it has) which could have been classed as `integer`.
 
-Character variables `<chr>` capture letters, words and can even contain whole sentences. As an example, they were used in this dataset to capture amongst other things, the airline name (`airline`) and tail number (`tailnum`) of the departing plane. 
+Character variables `<chr>` capture letters, words and can even contain whole sentences. As an example, they were used in this dataset to capture, amongst other things, the airline name (`airline`) and tail number (`tailnum`) of the departing plane. 
 
 Logical variables (`<lgl>`) are a categorical variable used to represent boolean values in R. They can only take the value of 'TRUE' or 'FALSE'. 
 
-Factor variables (`<fct>`) are also a form of categorical variable. They can capture data which cannot be ranked or ordered (nominal data) such gender. They can also be used to capture values which have a natural order to them such as 'clothing size' or 'film rating'.  
+Factor variables (`<fct>`) are also a form of categorical variable. They can capture data which cannot be ranked such as gender (male or female). They can also be used to capture values which have a natural order to them such as 'clothing size' (S, M, L, XL) or 'film rating' (1 to 5 stars).  
 
-I used both logical and factor variables in my analysis to capture boolean values. 
-
-
-### Data formats
-
-All the data sets used in this analysis were provided by Newark Airport. Each file was in a `csv` format.
+I used both logical and factor data types in my analysis to capture boolean values of 'TRUE' and 'FALSE'. 
 
 
-### Data quality and bias
+#### Data formats
+
+All the data sets used in this analysis were provided by Newark Airport. Each file was in a `.csv` format.
+
+
+#### Data quality and bias
+
+**Bias**
+The data provided is not a complete set of data to describe all flights departing Newark Airport in 2017. Whilst it is difficult to find an alternative source for EWR departures statistics it is clear that the departures listed in the `flights.csv` file are on domestic routes within the USA in addition to a small number of flights to Puerto Rico. All of the airlines in the data set are US based and the majority of these are "low-cost" airlines focused on the domestic US market.   
+
+Whilst the `flights` data contains a large set of observations (115,968 departures from EWR), not including international flights distorts the level of airport activity captured by the data. The degree of airport "busy-ness" is not properly reflected in the data provided. Similarly, not including data for arrivals at Newark Airport also distorts the view of activity at the airport. 
+
+Simplifying the data sets provided to me in this way is a clear source of selection bias which will likely result in the sample of data not being representative of the wider population of Newark Airport data. If the true nature of airport activity is not properly reflected in the data provided then it follows that the relevance of the conclusions drawn from any analysis conducted on that data are diminished or could be called in to question. 
+
+**Quality**
+Looking at each of the data sets in turn, the `flights` data contained 115,968 records of departing flights from Newark Airport with 19 variables. From this dataset there were three notable variables with missing values. 
+
+- The amount of time the flight spends in the air (`air_time`) had 3,266 missing values. Initally I considered these to be         erroneous values but I came to realise that the more likely explanation was that they indicate the corresponding flight had in   fact been cancelled. As the main focus of my analysis was on departure delays rather than cancellations, I opted to remove
+  these records. 
+
+- Departure delays (`dep_delays`), the main focus for the analysis requested by Newark Airport, had 2,903 missing values. At less   than 3% of the total sample size, the missing values were not material in nature and could either be reconstituted from other    variables or imputed. 
+
+- Records for the tail number (`tailnum`) of each departing aeroplane, the unique identifier for the aircraft, had a similar       number of missing values. This variable allows the `flights` data to be linked to the `planes` dataset. The missing values       could not be derived from other variables and would mean many observations being dropped if the two sets of data were combined. 
+Given that the initial focus for my analysis concerned the impact of weather on departure delays, it was a surprise to find the `weather` data provided by Newark Airport had so many missing values. Of the 9 weather variables provided, 5 of them had over 90% missing values. These variables had to be removed leaving only 4 weather variables for my analysis. 
+
+The `planes` data has 3,521 observations and 9 variables. The variables `year` and `seats` have a small number of missing values whereas the `speed` variable has almost 99% missing values. 
+
+There were no missing values within the `airlines` data set. 
 
 
 ## Ethics
 
-### Ethical issues in data sourcing and extraction
 
+#### Ethical issues in data sourcing and extraction
 
-### Ethical implications of business requirements
+The data provided is 'open source', meaning that it is openly accessible to all and shared by Newark Airport to everyone and anyone. There is no private personal information relating to any individuals contained in any of the data sets. Airlines companies are listed in the data sets and departure delay data can be linked to flights they operate. However this data is already in the public domain so there can be no ethical concerns in relation to this. 
+
+#### Ethical implications of business requirements
+
+The stated aim of this analysis is to allow the management of Newark Airport to better understand the factors that have an adverse impact on flight departure times at their airport. No one wants a delay to their flight; the airline, passengers, customers of freight departures, the departure airport or the destination airport. As such their can be no ethical considerations concerning the business requirements.  
 
 
 ## Analysis
 
 
-*Logistic regression*
+#### Stages in the data analysis process
 
-Attempting to define a linear regression model for delays and weather data proved inconclusive. Linear regression is suited to addressing dependent variables that have continuous values. However, the delay associated with a plane departing an airport can be seen not to have a linear relationship to a series of variables as their impact on delay is changeable and dependent on many other factors or a combination of factors. In such circumstances it is clearly better to categorise our dependent variable, to begin with at least, as having two values: `delay` or `no-delay`.  
+I began my analysis by investigating the five data sets that had been provided to me to familiarise myself with their contents. The `flights` data had over 303,000 observations with almost 116,000 of these relating to Newark Airport alone. `flights` contained a great deal of information relating to the departure time and arrival time of each flight, much of it repeated information but in a different format or state. 
 
-**Weather related delays**
+Working through each of the data sets in turn and reviewing these in relation to each other I was able to understand the landscape of the data. I also noted how each of the data sets could be linked, allowing information to be enriched by another data set. The linkages between the data sets are as follows:
 
-_Flight data_
-Flights leaving Newark Airport can be extracted from the main flights dataset (`flights_data`) after joining with `airports_data` and filtering on Newark Airport. 
+![](./img/flight_delays.png)
 
-```{r}
+Once I was reasonably comfortable with the data and what it represented, I began to review the questions Newark Airport had included in their briefing to me relating to delays and the weather: 
+
+- what effect does the weather have on flight departure delays?
+- how serious are weather related delays?
+- what types of weather impacts delays the most?
+
+Stepping back from the detail of the questions posed by Newark Airport, the question in my head became:
+
+"What's the best mechanism to link the data provided to departure delays?"
+
+The question was one of cause and effect. Can we use the weather data to predict delays in departure times? 
+
+**Linear regression** <br> 
+My first thought was to approach this problem using a linear regression model. Linear regression seeks to predict a numeric response (in this case it would be delay time) by quantifying the size and strength of the relationship between numerical values (delay time and weather metric values). 
+
+My attempt to define a linear regression model for delays and weather data proved inconclusive. On reflection I realised that whilst linear regression is suited to predicting the value of a numeric variable based on its relationship to one or more independent variables, the delay associated with a plane departing an airport cannot possibly have a linear relationship to a series of independent variables. Their impact on delay is changeable and dependent on a myriad of combinations of these variables. A straight line can't be fitted to such data so trying to predict a value for delay with a linear regression model is not appropriate. 
+
+I realised that in these circumstances it would be better to categorise the outcome of the analysis (the dependent variable) as having only two values: `delay` or `no-delay`. Such an approach is perfectly suited to **logistic regression**. I detail my approach to logistic regression and findings of my analysis in the **Predictive Analysis** section below. 
+
+**Cleaning** <br>
+Prior to starting my analysis I reviewed the data sets I would be using and sought to clean the data where possible, isolating data that related to Newark Airport, removing variables that were not needed and reviewing the nature of missing values. 
+
+Missing values can either be removed or imputed. My approach is to keep as many observations as possible so deletion is always a last resort. 
+
+**Data enrichment** <br>
+Once the data has been cleaned, the question becomes "can I enrich the data?", either from another source or by calculating variables derived from the existing data. As noted earlier my attempts to find additonal weather data proved fruitless. However, I was able to enrich the `flights` data by calculating two measures of "busy-ness" from the existing variables. These additions to the data set were used in a later analysis, detailed below. 
+
+Once data enrichment and cleaning had been completed, I began to build my models. 
+
+**Iteration** <br>
+Note that the above data analysis process whilst presented in a linear fashion it is invariably not linear in practice. It tends to be iterative, as you work with the data and learn more about it, you can return to earlier stages in your analysis and update these to reflect your improved understanding of the data and the questions being asked. 
+
+
+#### Tools for data analysis
+
+I outlined my initial thoughts on paper and once I had refined these sufficiently began to work in `RStudio`. I also made use of the Lucid website (`https://lucid.app`) to draw relationships between the datasets and the `ggplot` package in `RStudio` to generate visualisations. These were the only tools I used during my work on the Newark Airport assignment.  
+<br>
+<br>
+
+#### Predictive Analysis
+<br>
+
+Whilst linear regression seeks to predict a numeric response, logistic regression seeks to predict the probability of a particular outcome. Instead of trying to predict the *value* of delay time, a logistic regression model would seek to predict the *probability* that a flight would be delayed. That is, given a set of weather events at a particular time, what is the probability that a flight departing at that same time, will be delayed?
+
+**Logistic regression** is a classification modelling technique. Whilst the output of linear regression is a predicted value, the output of logistic regression is a categorical response. In this instance, `DELAY` or `NO DELAY`. Logistic regression uses a nonlinear function to model the relationship between the independent variables and the categorical response (predicted variable). This ensures that the output is always between 0 and 1 for all possible combination of input values. 
+<br> <br>
+
+##### Weather related delays
+<br>
+
+Turning to the first set of questions from Newark Airport concerning departure delays and the impact of weather on these. 
+
+- what effect does the weather have on flight departure delays?
+- how serious are weather related delays?
+- what types of weather impacts delays the most?
+
+To begin to answer these questions, data relating to Newark Airport had to be selected from each of the available data sets, where appropriate. 
+
+**Flight data** <br>
+Flights leaving Newark Airport can be extracted from the main flights dataset (`flights_data`) after joining with `airports_data` and filtering on Newark Airport's full name, "Newark Liberty International Airport". 
+
+```{r, include=FALSE}
 # capture only newark airport flights
 newark_flights <- inner_join(flights_data, airports_data, by = c("origin" = "faa")) %>% 
   filter(name == "Newark Liberty International Airport") 
@@ -139,13 +235,11 @@ The `newark_flights` data contains 26 variables with 115,968 observations.
 glimpse(newark_flights)
 ```
 
-Some of the data is superfluous and is repeated for each entry so we can remove details of Newark Airport such as the `name` and `latitude` and `longitude` and the like (`alt`, `tz`, `dst`, `tzone`, `origin`). 
+Some of the data is superfluous and is repeated for each entry so we can remove details of Newark Airport such as the `name` and `latitude` and `longitude` and altitude, time zone, daylight saving and departing airport (`alt`, `tz`, `dst`, `tzone`, `origin`). 
 
-Instead of the day number represented by `day`, it might be beneficial to include a variable for the the day name to capture the days of the week. This can be extracted from `time_hour`.
+Instead of the day number represented by `day`, it might be beneficial to include a variable for the the day name to capture the days of the week. This can be extracted from `time_hour`. As such the current `day` variable should be removed as should `year` as each observation is for the same year.
 
-As such the current `day` variable should be removed as should `year` as each observation is for the same year.
-
-The `hour` variable captures sufficient information about the scheduled departure time so `dep_time` can be removed as can `sched_dep_time`. The `minute` variable is also superfluous. 
+The `hour` and `time_hour` variable captures sufficient information about the scheduled departure time so `dep_time` can be removed as can `sched_dep_time`. The `minute` variable is also superfluous. 
 
 The arrival times, both scheduled and actual, and arrival delay are not predictor variables as they are a consequence of any delay on departure so can be removed. 
 
@@ -160,28 +254,29 @@ newark_flights <- newark_flights %>%
   mutate(day = wday(time_hour, label = TRUE)) # new day name variable
 ```
 
-We reduce the number of variables from 26 to 10.
+From this, we reduce the number of variables from 26 to 10.
 
 ```{r}
 glimpse(newark_flights)
 ```
 
-There are a number of missing values across the dataset. 
+There are a number of missing values across the dataset. Logistic regression is intolerant of missing values. It can't model the size and strength of a relationship with missing values. 
 
 ```{r}
 colSums(is.na(newark_flights))
 ```
 
-We start by looking at the summary statistics. 
+Before acting on these, we start by looking at the statistical distribution (summary statistics) of the values for each of the three variables. 
 
 ```{r}
 newark_flights %>% 
   select(dep_delay, tailnum, air_time) %>% 
   summary()
 ```
-The amount of time the flight spends in the air (`air_time`) has a considerable number of missing values. These could be considered erroneous but more likely they indicate that the flight has been cancelled. A new variable (`cancelled`) could be added to capture this information then the `NA` values within `air_time` can be converted to a zero value. This would allow another regression model to be constructed to predict cancellations. For the moment, we will remove the `NA` values within `air_time`.
 
-```{r}
+The amount of time the flight spends in the air (`air_time`) has a considerable number of missing values. These could be considered erroneous but more likely they indicate that the flight has been cancelled. A new variable (`cancelled`) with values `TRUE` and `FALSE` could be added to capture this information allowing the `NA` (missing) values within `air_time` to be converted to a zero value. This would allow another regression model to be constructed to predict cancellations. For the moment, we will remove the `NA` values within `air_time` but make a mental note for future reference. 
+
+```{r, include=FALSE}
 # remove NAs from air_time
 newark_flights_clean <- newark_flights %>% 
   drop_na(air_time)
@@ -208,7 +303,7 @@ newark_flights_clean <- newark_flights_clean %>%
   mutate(tailnum = ifelse(is.na(tailnum), "ABCXYZ", tailnum))
 ```
 
-There should now be no missing values within the newark_flights_clean dataset. 
+The result of all this cleaning is a new dataset, `newark_flights_clean`, which contains no missing values. 
 
 ```{r}
 colSums(is.na(newark_flights_clean))
@@ -222,8 +317,8 @@ dim(newark_flights_clean)
 ```
 
 
-_Dependent variable_
-There is currently no dependent variable (class) in the dataset so we should add one. Newark Airport are interested in departure delays. Although the US aviation authority (The FAA) state that flights departing with less than a 15 minute delay are deemed to be 'on time', we will classify all flights with a departure delay of greater than 0 as being delayed. Once added we can remove the `dep_delay` variable.
+_Dependent variable_ <br>
+There is currently no dependent variable (class) in the `newark_flights_clean` dataset so we should add one. Logistic regression requires this. Newark Airport are interested in departure delays. Although the US aviation authority (The FAA) state that flights departing with less than a 15 minute delay are deemed to be 'on time', we will classify all flights with a departure delay of greater than 0 as being delayed. The new column will be called `delayed` and have the value of `TRUE`  or `FALSE`. Once added we can remove the `dep_delay` variable.
 
 ```{r}
 # add dependent variable
@@ -233,8 +328,8 @@ newark_flights_clean <- newark_flights_clean %>%
 ```
 
 
-_Weather data_
-Weather relating to Newark Airport can be extracted from the larger `weather_data` population by filtering on "EWR", the IATA code for Newark Airport.
+**Weather data** <br>
+Weather observations relating to Newark Airport can be extracted from the larger `weather_data` sample by filtering on "EWR", the FAA code for Newark Airport.
 
 ```{r}
 # capture only newark weather
@@ -255,7 +350,9 @@ There are a number of missing values across the weather dataset.
 ```{r}
 colSums(is.na(newark_weather))
 ```
-All of these variables are numeric. We start by looking at the summary statistics. 
+All of these variables are numeric. 
+
+Before cleaning, we start by looking at the summary statistics. 
 
 ```{r}
 newark_weather %>% 
@@ -263,9 +360,11 @@ newark_weather %>%
   summary()
 ```
 
-The following variables have so many missing entries that it makes no sense to impute values for them and they should just be removed from the dataset: `temp`, `dewp`, `humid`, `precip` and `pressure`. 
+The following variables have so many missing entries (recorded as `NAs`) that it makes no sense to impute values for them and they should just be removed from the dataset: `temp`, `dewp`, `humid`, `precip` and `pressure`. 
 
-In addition, `origin` should also be removed as the value for all observations is "EWR", the IATA airport code for Newark Airport. Variables `year`, `month`, `day` and `hour` are already included within `time_hour` so can be safely removed. 
+In addition, `origin` should also be removed as the value for all observations is "EWR", the FAA airport code for Newark Airport.
+
+Variables `year`, `month`, `day` and `hour` are already included within `time_hour` so can be safely removed. 
 
 ```{r}
 newark_weather_clean <- newark_weather %>% 
@@ -273,7 +372,7 @@ newark_weather_clean <- newark_weather %>%
   select(-c(origin, year, month, day, hour))
 ```
 
-The remaining missing values should be imputed with mean values.
+The missing values for `wind_dir`, `wind_speed`, `wind_gust` and `visib` should be imputed with mean values.
 
 ```{r}
 newark_weather_clean <- newark_weather_clean %>% 
@@ -290,7 +389,7 @@ newark_weather_clean %>%
   select(wind_dir, wind_speed, wind_gust, visib) %>% 
   summary()
 ```
-There are now no missing values within the newark_weather dataset. 
+There are now no missing values within the `newark_weather_clean` dataset. 
 
 ```{r}
 colSums(is.na(newark_weather_clean))
@@ -301,12 +400,12 @@ For the retained variables there has been no loss of data - there are still 8,73
 ```{r}
 dim(newark_weather_clean)
 ```
+<br>
 
+_Outliers_ <br>
+Logistic regression models are sensitive to outliers within the dataset.  
 
-_Outliers_
-Logistic regression is intolerant to outliers in the data. 
-
-Dealing first with the `newark_flights_clean` dataset. 
+Let's deal first with the `newark_flights_clean` data. 
 
 ```{r, message=FALSE}
 newark_flights_clean %>% 
@@ -317,7 +416,10 @@ newark_flights_clean %>%
   facet_wrap(~ key, scales = "free") + 
   theme_minimal()
 ```
-There is a skew in both the `air_time` and `distance` data within the flights dataset. This can be resolved by removing any value that is larger (right skew) or less than (left skew) 1.5 times the interquartile range (IQR). Quartiles divide an ordered set of values in to four equal parts. The IQR of a set of values is the difference between the values for the first quartile (Q1) and the third quartile (Q3). The value for Q1 is the middle number between the smallest number and the median whilst the Q3 value is the middle number between the median and the highest number. 
+<br>
+There is a skew in both the `air_time` and `distance` data within the flights dataset. This is due to departing flights to Honolulu in Hawaii. 
+
+As a rule-of-thumb, the skew may be resolved by removing any value that is larger (right skew) or less than (left skew) 1.5 times the interquartile range (IQR). Quartiles divide an ordered set of values in to four equal parts. The IQR of a set of values is the difference between the values for the first quartile (Q1) and the third quartile (Q3). The value for Q1 is the middle number between the smallest number and the median whilst the Q3 value is the middle number between the median and the highest number. 
 
 
 ```{r}
@@ -330,7 +432,7 @@ newark_flights_clean <- newark_flights_clean %>%
   select(-c(max_air_time, max_distance))
 ```
 
-We only lose 716 observations and the range of values for each of these variables is much reduced. 
+Applying this rule-of-thumb to the `newark_flights_clean` data we only lose 716 observations and the range of values for each of these variables is much reduced. 
 
 ```{r, message=FALSE}
 newark_flights_clean %>% 
@@ -342,9 +444,6 @@ newark_flights_clean %>%
   theme_minimal()
 ```
 
-```{r}
-glimpse(newark_flights_clean)
-```
 
 Next we turn to outliers in the newark weather dataset. 
 
@@ -370,7 +469,7 @@ newark_weather_clean <- newark_weather_clean %>%
   select(-c(max_wind_gust, max_wind_speed))
 ```
 
-We lose 120 observations and the range of values for each of these variables is much reduced. 
+We lose 120 observations and the range of values for both of the wind variables is much reduced. 
 
 ```{r, message=FALSE}
 newark_weather_clean %>% 
@@ -381,9 +480,10 @@ newark_weather_clean %>%
   facet_wrap(~ key, scales = "free") + 
   theme_minimal()
 ```
+<br> <br>
 
-_Flight delays and Weather_
-We want to examine amongst other things, the impact of weather on delays at Newark Airport, so we should join the cleaned Newark weather data to the cleaned Newark flights data set. 
+**Flight delays and Weather** <br>
+We want to examine the impact of weather on delays at Newark Airport, so we should join the cleaned Newark weather data to the cleaned Newark flights data set using the `time-hour` variable which is common in both sets of data. 
 
 ```{r}
 newark_weather_delays <- 
@@ -391,10 +491,11 @@ newark_weather_delays <-
   select(delayed, wind_dir, wind_speed, wind_gust, visib)
 ```
 
-The inner join results in a loss of 1,204 observations from the newark_flights_clean dataset of 111,986 or a 1% loss in data. 
+The (inner) join results in a loss of 1,204 observations from the `newark_flights_clean` dataset of 111,986 or a 1% loss in data. The losses occur where there is no weather data for the `time_hour` specified in the flights data. 
+<br>
 
-_Splitting the dataset_
-We want to create a training set of data for our model which we can then test on the remaining data, the test set.
+_Splitting the dataset_ <br>
+We now want to create a training set of data for our model. Once we have trained the model to recognise (we hope) when weather causes a flight delay, we can then test the efficacy of the model on the remaining data, the test set.
 
 ```{r}
 # number of rows of data in newark_delays dataset
@@ -408,72 +509,80 @@ weather_delays_train <- newark_weather_delays[sample_set,]
 weather_delays_test <- newark_weather_delays[-sample_set,]
 ```
 
-We want to make sure that the class distribution of the data in the samples mimics that of the original data set. 
+We want to make sure that the class distribution of the data in the samples mimics that of the original data set. By class distribution, we refer to the value of the dependent variable (`delayed`) be it `TRUE` or `FALSE` and the number of each in the set of data. 
 
-```{r}
+```{r, echo=TRUE}
 # class distribution in original dataset
 round(prop.table(table(select(newark_weather_delays, delayed), exclude = NULL)), 3) * 100 
 ```
 
-```{r}
+```{r, echo=TRUE}
 # class distribution in training set
 round(prop.table(table(select(weather_delays_train, delayed), exclude = NULL)), 3) * 100 
 ```
 
-```{r}
+```{r, echo=TRUE}
 # class distribution in test set
 round(prop.table(table(select(weather_delays_test, delayed), exclude = NULL)), 3) * 100 
 ```
 
 There is a slight class imbalance in the training data set. Ideally we would like to have a balanced data set for the model to learn from otherwise it will be skewed towards the dominant class in the data, which in our example is a FALSE (or negative) result for `delayed`. The imbalance is not massively significant so we will continue but make a note for further model development in the future. 
+<br>
 
-*Training the model*
+_Training the model_ <br>
+Let's build the model using the training set of data and call the model `weather_delays_mod1`.
 
-Let's build the model using the training set of data. 
-
-```{r}
+```{r, echo=TRUE}
 weather_delays_mod1 <- glm(formula = delayed ~ ., data = weather_delays_train, family = binomial(link = "logit"))
 ```
+<br>
 
-_Evaluating the model_
+_Evaluating the model_ <br>
+We get a detailed description of the model using the `summary()` function. 
 
 ```{r}
 summary(weather_delays_mod1)
 ```
+<br>
 
-The error regarding singularities is most likely due to multicollinearity, or a perfect linear relationship existing between two of the variables. 
+The coefficients error regarding singularities is most likely due to multicollinearity, or a perfect linear relationship existing between two of the variables. 
 
 We can produce a correlation matrix to see this. 
 
 ```{r}
 cor(weather_delays_train[, c("wind_dir", "wind_speed", "wind_gust", "visib")])
 ```
-We can see that `wind_speed` and `wind_gust` are perfectly correlated. Let's drop `wind_speed` from the model and re-run it. 
+<br>
 
-```{r}
+We can see that `wind_speed` and `wind_gust` are perfectly correlated (value = 1.0). Let's drop `wind_speed` from the model and re-run it. 
+
+```{r, echo=TRUE}
 weather_delays_mod2 <- glm(formula = delayed ~ wind_dir + wind_gust + visib,
                            family = binomial(link = "logit"),
                            data = weather_delays_train)
 ```
-
-We can get a detailed description of the model using the summary function.
+<br>
 
 ```{r}
 summary(weather_delays_mod2)
 ```
+<br>
 
-Of the weather variables, visibility (`visib`) has a very small `p-value` denoted by Pr(>|t|) and is statistically significant (indicated by the 3-stars) as a predictor of flight delays. Also `wind_gust` is statistically signicant at the 5% level. 
+Of the weather variables, visibility (`visib`) has a very small `p-value` denoted by Pr(>|t|) and is statistically significant (indicated by the 3-stars) as a predictor of flight delays. 
 
-The coefficient of each variable is quoted in log-odds. For every unit increase in the value of `visib`, the log-odds of `delayed` being `TRUE` changes by -0.08871. In terms of odds, we have to exponeniate the coefficient as follows:
+The coefficient of each variable is quoted in log-odds. For every unit increase in the value of `visib`, the log-odds of `delayed` being `TRUE` changes by -0.08526. In terms of odds, we have to exponeniate the coefficient as follows:
 
 ```{r}
 exp(coef(weather_delays_mod2)["visib"])
 ```
 
-Assuming all other factors are held constant, this value is interpreted as the odds of a flight being delayed decrease by 0.9151078 for each additional mile of visibility gained. 
+Assuming all other factors are held constant, this value is interpreted as the odds of a flight being delayed decrease by 0.9182773 for each additional mile of visibility gained. 
+<br>
 
-_Predictive accuracy_
-We need to assess the preformance of our model (which is based on training data) in predicting the dependent or response variable for observations in the test data set. 
+_Predictive accuracy_ <br>
+We need to assess the preformance of our model (which is based on training data) in predicting the dependent or response variable for observations in the test data set. This is data the model has not seen so acts as a proxy for the model's general applicability against unseen data.
+
+To assess model performance, we create a 'confusion matrix' which shows the interaction between the predicted and actual values. We assume a probability threshold of 0.5 for `TRUE`.  
 
 ```{r}
 # add predictions to test data set
@@ -495,12 +604,24 @@ conf_table_weather_delays
 
 The correct predictions of the model are top left and bottom right of the table. 
 
-The model correctly predicted "no delay" (`FALSE`) for 16449 observations in the test set and "delay" for 505. That is, True Positives = 16449, whilst True Negatives = 505.
+The model correctly predicted "no delay" (`FALSE`) for 16575 observations in the test set and "delay" for 549. That is, True Positives = 16575, whilst True Negatives = 549.
 
-The accuracy of the `weather_delays` model = (16449 + 505) / 27696 = 61%
+The accuracy of the `weather_delays` model = (16575 + 549) / 27696 = 62%. 
 
+Given that only one weather variable is statistically significant, this result is quite good. 
+<br>
 
-_Other factors impacting delays_
+_Other diagnostics_ <br>
+The predictive accuracy of the model must be seen in light of other diagnostic variables captured by the `summary()` function above. 
+
+- the difference between the null and residual deviance values indicates how much the model's performance was enhanced by the inclusion of the weather predictor variables such as `visib`. The larger the difference, the better. The difference between the two values in the `weather_delays_mod2` model is very small indicating that the weather variables added little predictive value. 
+
+- the AIC value (Akaike Information Criterion) is a quantification of how well the model explains variablility in the data. A lower number is better. We should compare the AIC value (110154) of the `weather_delays_mod2` with subsequent logistic regression models to better understand this model's performance. 
+
+<br>
+
+##### Other factors impacting delays 
+<br>
 
 Having looked at the impact of the weather on flight delays we turn now to consider other factors which may also delay take-off at Newark Airport. 
 
@@ -508,13 +629,14 @@ Returning to the `newark_flights_clean` dataset, we should look to supplement th
 
 - adding data about the plane 
 - capturing a measure of 'busy-ness' regarding flights that day or hour
-- adding the visibility and wind gust variables from the weather dataset. 
+- adding the visibility variable from the weather dataset. 
 
 Once complete, we could create another model and assess its predictive quality. 
 
 Let's firstly look at additional information we can glean concerning the planes departing Newark Airport. 
+<br> <br>
 
-_Planes data_
+**Plane data**
 
 ```{r}
 glimpse(plane_data)
@@ -522,9 +644,9 @@ glimpse(plane_data)
 Of interest are the following variables:
 
 - `tailnum` to link the table to the flights data
-- `year` from which we can determine the age of the plane in 2017
+- `year` from which we can determine the age of the plane in 2017. Perhaps older planes break down more often. 
 - `engines` tells us how many engines the plane has and how many engines could go wrong
-- `seats` informs us as to the capacity of the plane and so the potential for passenger caused delays 
+- `seats` informs us as to the capacity of the plane and so the potential for passenger related delays 
 - `engine` there are only 8 types of engine which allow us to highlight if there are recurring faults with a particular engine type
 
 Let's clean the plane data of which there are 3,521 observations and 9 variables. 
@@ -538,7 +660,9 @@ Check for missing values.
 ```{r}
 colSums(is.na(plane_data))
 ```
-Of our variables of interest `year` and `seats` are missing values. We can't impute these values so we should remove the offending observations. We should also remove the `speed` variable as this also has a huge number of missing values. 
+Of our variables of interest `year` and `seats` are missing values. We can't impute these values so we should remove the offending observations. 
+
+We should also remove the `speed` variable as this has a huge number of missing values. 
 
 ```{r}
 plane_data_clean <- plane_data %>% 
@@ -546,21 +670,28 @@ plane_data_clean <- plane_data %>%
   drop_na()
 ```
 
-There should now be no missing values and only 5 variables.
+We focus on the 5 variables of interest and remove the missing values with a loss of only 103 observations to produce data set `plane_data_clean`.
 
-```{r}
+```{r, echo=FALSE}
 colSums(is.na(plane_data_clean))
 ```
+<br>
 
 Let's calculate the age of the plane and add this to the dataset.
 
-```{r}
+```{r, echo=TRUE}
 plane_data_clean <- plane_data_clean %>% 
   mutate(age = 2017 - year)
 ```
 
+```{r}
+glimpse(plane_data_clean)
+```
+<br>
 
-Look for outliers in `plane_data_clean`: 
+
+_Outliers_ <br>
+Let's examine `plane_data_clean` for outliers. 
 
 ```{r, message=FALSE}
 plane_data_clean %>% 
@@ -572,20 +703,21 @@ plane_data_clean %>%
   theme_minimal()
 ```
 
-There are discrepancies in `age` and `year`.
+There are clear discrepancies in `age` and `year`.
+
+Sorting the data by age reveals there is a zero value rather than a missing value in `year`. We need to remove this. 
 
 ```{r}
 plane_data_clean %>% 
   slice_max(age, n = 5)
 ```
-There is a zero value rather than a missing value in `year`. We need to remove this. 
 
 ```{r}
 plane_data_clean <- plane_data_clean %>% 
   filter(year != 0)
 ```
 
-The range of the variables becomes more normal. 
+After which the range of the variables becomes more normal. 
 
 ```{r, message=FALSE}
 plane_data_clean %>% 
@@ -605,10 +737,21 @@ plane_data_clean <- plane_data_clean %>%
 ```
 
 
-_Measure of busy-ness_
-We should look to capture a measure of busy-ness in the flights data. How many flights are taking off that day? That hour?
+<br> <br>
 
-```{r}
+**Flights data**
+
+Returning to the flights data. 
+<br>
+
+_Measure of busy-ness_ <br>
+We should look to capture a measure of busy-ness in the flights data. 
+
+How many flights are taking off that day? That hour?
+
+We can calculate values for each of these variables and add them to the data set. 
+
+```{r, echo=TRUE}
 # measures of busy-ness in newark flights data
 newark_flights_clean <- newark_flights_clean %>% 
   mutate(date = as.Date(time_hour)) %>% 
@@ -621,6 +764,11 @@ newark_flights_clean <- newark_flights_clean %>%
   mutate(departures_in_hour = n()) %>% 
   ungroup()
 ```
+
+```{r}
+glimpse(newark_flights_clean)
+```
+<br>
 
 Check for outliers in new busy-ness variables. 
 
@@ -636,7 +784,7 @@ newark_flights_clean %>%
 
 `departures_in_day` is skewed left so we should reduce the range of values in this variable. 
 
-```{r}
+```{r, echo=TRUE}
 # remove outliers from departures_in_day
 newark_flights_clean <- newark_flights_clean %>% 
   mutate(min_departures_in_day = quantile(departures_in_day, 0.75) - 
@@ -645,7 +793,9 @@ newark_flights_clean <- newark_flights_clean %>%
   select(-c(min_departures_in_day))
 ```
 
-Outliers have been removed at a cost of 20,475 observations (down from 111,986 to 91,511), about 18% of the dataset. 
+The outliers have been removed from `departures_in_day` at a cost of 20,475 observations (down from 111,986 to 91,511), about 18% of the dataset. 
+
+After which the range of the variables becomes more normal. 
 
 ```{r, message=FALSE}
 newark_flights_clean %>% 
@@ -656,31 +806,33 @@ newark_flights_clean %>%
   facet_wrap(~ key, scales = "free") + 
   theme_minimal()
 ```
+<br>
 
-_Flight delays and Other Factors_
+**Flight delays and Other Factors** <br>
+Let's combine `newark_flights_clean` with `plane_data_clean` and data from `newark_weather_clean`. We can then build another model to examine the impact of 'other factors' on delays at Newark Airport. 
 
-Let's combine `newark_flights_clean` with `plane_data_clean` and add in `visib` from `newark_weather_clean`. We can then build another model to examine the impact of 'other factors' on delays at Newark Airport. 
-
-```{r}
+```{r, echo=TRUE}
 newark_other_delays <- 
   inner_join(newark_flights_clean, plane_data_clean, by = "tailnum") %>% 
   select(-date, -tailnum) # remove unwanted variables
 ```
+<br>
 
 We lose 7,802 observations with the inner join on the plane data, down to 83,709.
 
-Combine this with `visib` and `wind_gust` from the weather data. 
+Combine this with `visib` from the weather data. 
 
-```{r}
+```{r, echo=TRUE}
 newark_other_delays <-
   inner_join(newark_other_delays, newark_weather_clean, by = "time_hour") %>% 
-  select(-c(wind_dir, wind_speed, time_hour)) # remove unwanted weather variables 
+  select(-c(wind_dir, wind_gust, wind_speed, time_hour)) # remove unwanted weather variables 
 ```
+<br>
 
-We lose another 750 observations, down to 82959.
+We lose another 750 observations, down to 82,959.
+<br>
 
-
-_Splitting the dataset_
+_Splitting the dataset_ <br>
 Again, we want to create a training set of data for our model which we can then test on the remaining data, the test set.
 
 ```{r}
@@ -712,24 +864,21 @@ round(prop.table(table(select(other_delays_train, delayed), exclude = NULL)), 3)
 round(prop.table(table(select(other_delays_test, delayed), exclude = NULL)), 3) * 100 
 ```
 
-Again there is a slight class imbalance in the training data set. The imbalance is not massively significant so we will continue but make a note for further model development in the future. 
+Again there is a slight class imbalance in the training data set. The imbalance is not massively significant so we will continue but make a note for future model development. 
 
 
-*Training the model*
-
+_Training the model_ <br>
 Let's build the model using the training set of data. 
 
-```{r}
+```{r, echo=TRUE}
 other_delays_mod1 <- glm(formula = delayed ~ ., data = other_delays_train, family = binomial(link = "logit"))
 ```
 
-_Evaluating the model_
-
+_Evaluating the model_ <br>
 ```{r}
 summary(other_delays_mod1)
 ```
-_Improving the model_
-
+_Improving the model_ <br>
 The `NAs` returned for `distance` indicate that multicollinearity exists in the model. That is, two or more predictor variables are highly (or perfectly) correlated. We can generate a correlation matrix to see the inter-relationship of the numerical variables. In this instance it is likely that there is a high correlation between `distance` and `air_time`.
 
 ```{r}
@@ -742,7 +891,7 @@ The correlation between the two variables is very strong (0.99). We should remov
 
 Whilst the correlation matrix can be used for numerical variables we must also consider if there are any aliased variables in the model. Again, this is another measure of correlation between variables.  
 
-```{r}
+```{r, echo=TRUE}
 alias(other_delays_mod1)
 ```
 
@@ -750,12 +899,13 @@ It's clear that `distance` and `dest` are also highly correlated, which makes se
 
 Let's remove `air_time` and `dest` but retain `distance` which is a more intuitive and accurate measure of length or duration, and rebuild the model. 
 
-```{r}
+```{r, echo=TRUE}
 other_delays_mod2 <- glm(formula = delayed ~ carrier + distance + hour + day +
                            departures_in_day + departures_in_hour + engines + seats +
-                           engine + age + wind_gust + visib, 
+                           engine + age + visib, 
                          data = other_delays_train, family = binomial(link = "logit"))
 ```
+<br>
 
 ```{r}
 summary(other_delays_mod2)
@@ -765,17 +915,20 @@ We can test the collinearity of variables in the model using the `vif` function 
 ```{r}
 vif(other_delays_mod2)
 ```
-VIF stands for variance inflation factor and is useful to identify correlation where it may exist between three or more variables rather than just between pairs. 
+VIF stands for Variance Inflation Factor and is useful to identify correlation where it may exist between three or more variables rather than just between pairs. 
 
 A VIF of 5 or more indicates the presence of multicollinearity. We can see that `carrier` and `engine` both have values in excess of 5 and should be removed from the model. 
 
-Reviewing the summary statistics of the model shows that `hour`, `day`, `departures_in_day`, `departures_in_hour`, `seats`, `age`, `wind_gust` and `visib` are statistically significant predictor variables. Whilst `carrier` is significant it fails the VIF test and is removed. 
+Reviewing the summary statistics of the model shows that `hour`, `day`, `departures_in_day`, `departures_in_hour`, `seats`, `age` and `visib` are statistically significant predictor variables. Whilst `carrier` is significant it fails the VIF test and is removed. 
 
-```{r}
+We then build a third iteration of the model and evaluate it. 
+
+```{r, echo=TRUE}
 other_delays_mod3 <- glm(formula = delayed ~ hour + day + departures_in_day +
-                           departures_in_hour + seats + age + wind_gust + visib, 
+                           departures_in_hour + seats + age + visib, 
                          data = other_delays_train, family = binomial(link = "logit"))
 ```
+<br>
 
 ```{r}
 summary(other_delays_mod3)
@@ -783,18 +936,23 @@ summary(other_delays_mod3)
 
 We note that `age` is not statistically significant, so another iteration of the model is required to remove this predictor variable. 
 
-```{r}
+```{r, echo=TRUE}
 other_delays_mod4 <- glm(formula = delayed ~ hour + day + departures_in_day +
-                           departures_in_hour + seats + wind_gust + visib, 
+                           departures_in_hour + seats + visib, 
                          data = other_delays_train, family = binomial(link = "logit"))
 ```
+<br>
 
 ```{r}
 summary(other_delays_mod4)
 ```
+<br>
 
-_Predictive accuracy_
-We need to assess the preformance of our model (which is based on training data) in predicting the dependent or response variable for observations in the test data set. 
+_Predictive accuracy_ <br>
+We need to assess the preformance of our model (which is based on training data) in predicting the dependent or response variable for observations in the test data set. Again this is data the model has not yet seen and acts as a proxy for the model's applicability against unseen data. 
+
+As with the previous `weather_delays` model we create a 'confusion matrix' which displays the interaction between the predicted and actual values. Again we assume a probability threshold of 0.5 for `TRUE`.
+<br>
 
 ```{r}
 # add predictions to test data set
@@ -819,9 +977,18 @@ The correct predictions of the model are top left and bottom right of the table.
 The model correctly predicted "no delay" (`FALSE`) for 9830 observations in the test set and "delay" for 4090 That is, True Positives = 9830, whilst True Negatives = 4090.
 
 The accuracy of the `weather_delays` model = (9830 + 4090) / 20740 = 67%
+<br>
+
+_Other diagnostics_
+The `summary()` function for model 4 above captures additional diagnostic variables:
+
+- the difference between the null and residual deviance values indicates to what degree the model's predictive capability was enhanced by the inclusion of the predictor variables. The larger the difference between the two values, the better. The difference in this model is signicantly greater than the earlier `weather_delays_mod2` model. 
+
+- the AIC value of 74,926 is much lower than `weather_delays_mod2`. The lower the AIC value, the better. 
+<br>
 
 
-*Cancelled flights model*
+##### Cancelled flights model
 
 As noted earlier there appears to be a number of cancelled flights in the `flights` dataset denoted by `NA` values within the `air_time` variable.
 
@@ -879,8 +1046,7 @@ newark_cancelled_clean <- newark_cancelled_clean %>%
 ```
 
 
-_Outliers_
-
+_Outliers_ <br>
 Logistic regression is intolerant to outliers in the data so let's remove them from the `cancelled_flights` dataset. 
 
 ```{r}
@@ -895,8 +1061,7 @@ newark_cancelled_clean <- newark_cancelled_clean %>%
 ```
 
 
-_Join cancelled dataset to weather and plane data_
-
+_Join cancelled dataset to weather and plane data_ <br>
 We want to join the cleaned weather and plane datasets to the clean cancelled flights data. 
 
 ```{r}
@@ -910,7 +1075,7 @@ newark_cancelled_weather_other <-
 ```
 
 
-_Splitting the dataset_
+_Splitting the dataset_ <br>
 Again, we want to create a training set of data for our model which we can then test on the remaining data, the test set. First let's examine the class imbalance in the full dataset.
 
 ```{r}
@@ -988,16 +1153,15 @@ round(prop.table(table(select(cancelled_test, cancelled), exclude = NULL)), 3) *
 ```
 
 
-*Training the model*
-
+_Training the model_ <br>
 Let's build the model using the training set of data. 
 
-```{r}
+```{r, echo=TRUE}
 cancelled_flights_mod1 <- glm(formula = cancelled ~ ., data = cancelled_train_ROSE, family = binomial(link = "logit"))
 ```
+<br>
 
-_Evaluating the model_
-
+_Evaluating the model_ <br>
 ```{r}
 summary(cancelled_flights_mod1)
 ```
