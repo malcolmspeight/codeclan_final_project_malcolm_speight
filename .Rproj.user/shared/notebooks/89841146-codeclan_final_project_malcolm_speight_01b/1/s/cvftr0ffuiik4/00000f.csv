@@ -1,0 +1,3 @@
+"0","other_delays_mod3 <- glm(formula = delayed ~ hour + day + departures_in_day +"
+"0","                           departures_in_hour + seats + age, "
+"0","                         data = other_delays_train, family = binomial(link = ""logit""))"

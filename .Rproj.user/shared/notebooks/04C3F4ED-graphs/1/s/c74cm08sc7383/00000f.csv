@@ -1,0 +1,5 @@
+"0","total_flights <- flights_data_for_graphs %>% "
+"0","  group_by(origin, month) %>% "
+"0","  summarise(flights = sum(flight_count))"
+"0",""
+"0","total_flights"

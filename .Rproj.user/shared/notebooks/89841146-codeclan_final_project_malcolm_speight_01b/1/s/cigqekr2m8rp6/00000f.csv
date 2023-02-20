@@ -1,0 +1,12 @@
+"0","# class distribution in test set"
+"0","round(prop.table(table(select(weather_delays_test, delayed), exclude = NULL)), 3) * 100 "
+"1","delayed
+"
+"1","FALSE "
+"1"," TRUE "
+"1","
+"
+"1"," 61.4 "
+"1"," 38.6 "
+"1","
+"

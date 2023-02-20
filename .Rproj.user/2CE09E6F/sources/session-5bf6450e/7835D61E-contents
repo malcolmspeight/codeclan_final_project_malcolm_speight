@@ -1,0 +1,15 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r, include=FALSE}
+flights_data <- read_csv("data/flights.csv") %>% 
+  janitor::clean_names()
+airports_data <- read_csv("data/airports.csv") %>% 
+  janitor::clean_names()
+weather_data <- read_csv("data/weather.csv") %>% 
+  janitor::clean_names()
+plane_data <- read_csv("data/planes.csv") %>% 
+  jani
+

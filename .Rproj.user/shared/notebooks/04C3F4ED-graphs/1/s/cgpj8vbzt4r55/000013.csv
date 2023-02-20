@@ -1,0 +1,5 @@
+"0","delayed_flights <- flights_data_for_graphs %>% "
+"0","  group_by(origin, month) %>% "
+"0","  summarise(delays = sum(flight_delayed))"
+"0",""
+"0","delayed_flights"

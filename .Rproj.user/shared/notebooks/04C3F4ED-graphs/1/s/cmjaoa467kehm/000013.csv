@@ -1,0 +1,7 @@
+"0","flights_data_for_graphs <- flights_data %>% "
+"0","  select(month, dep_delay, origin, time_hour) %>% "
+"0","  mutate(flight_count = 1) %>% "
+"0","  mutate(flight_delayed = ifelse(dep_delay > 0, 1, 0)) %>% "
+"0","  mutate(month_name = month(time_hour, label = TRUE)) %>% "
+"0","  select(-time_hour) %>% "
+"0","  drop_na()"

@@ -1,0 +1,13 @@
+"0","cancelled_train_ROSE <- ROSE(cancelled ~., data = cancelled_train, seed = 1)$data"
+"0","# class distribution in adjusted training set"
+"0","round(prop.table(table(select(cancelled_train_ROSE, cancelled), exclude = NULL)), 3) * 100 "
+"1","cancelled
+"
+"1","FALSE "
+"1"," TRUE "
+"1","
+"
+"1"," 49.9 "
+"1"," 50.1 "
+"1","
+"
