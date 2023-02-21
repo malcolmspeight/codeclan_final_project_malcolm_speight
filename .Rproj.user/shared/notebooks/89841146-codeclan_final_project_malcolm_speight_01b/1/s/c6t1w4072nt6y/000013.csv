@@ -8,4 +8,4 @@
 "0","  theme(legend.title=element_blank()) + "
 "0","  xlab("""") +"
 "0","  ylab(""Average delay (mins)\n"") + "
-"0","  ggtitle(""Average departure delay from NYC airports\n"")"
+"0","  ggtitle(""Average departure delay from NYC airports in 2017\n"")"

@@ -1736,7 +1736,7 @@ delay_data_for_graphs %>%
   theme(legend.title=element_blank()) + 
   xlab("") +
   ylab("Flights delayed (%)\n") + 
-  ggtitle("Flights delayed from NYC airports\n")
+  ggtitle("Flights delayed from NYC airports in 2017\n")
 ```
 The same trend for delays is mirrored across all three airports with delays highest in the summer months
 whilst they peak again in Dec and Jan. In other words, the delays are highest during the main 
@@ -1745,7 +1745,6 @@ holiday periods.
 It's worth noting that whilst JFK has higher passenger numbers, Newark still has more delays 
 in percentage terms. La Guardia has severe delays in the summer months but appears to recover 
 during the Christmas period of 2017. 
-
 <br>
 
 ```{r}
@@ -1759,16 +1758,15 @@ delay_data_for_graphs %>%
   theme(legend.title=element_blank()) + 
   xlab("") +
   ylab("Average delay (mins)\n") + 
-  ggtitle("Average departure delay from NYC airports\n")
+  ggtitle("Average departure delay from NYC airports in 2017\n")
 ```
-Unsurprisingly, average departure delays are highest in the summer months, fall during the Autumn 
-period but rise again during the Christmas break. 
+In line with the number of flights delayed, average departure delays were highest in the summer months,
+fall during the Autumn period but rise again during the Christmas break. 
 
-Although average delays were lowest in the first half of 2017 at Newark Airport, this coincided
-with a high percentage of flights delayed (see first graph). In the latter half of 2017, 
-Newark unfortunately saw their average departure delay exceed that of JFK and La Guardia even 
-though the percentage of flights they saw delayed trended in line with the other NYC airports (again,
-see graph above). 
+Average delays rose in the first half of 2017 at Newark Airport as they did at the other NYC airports. 
+In the latter half of 2017, Newark unfortunately saw their average departure delay exceed that of 
+JFK and La Guardia even though the percentage of flights they saw delayed trended in line with 
+the other NYC airports (see first graph). 
 
 
 #### Conclusions and Future Work
