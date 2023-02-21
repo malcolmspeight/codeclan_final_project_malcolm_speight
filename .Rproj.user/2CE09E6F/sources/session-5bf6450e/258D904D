@@ -13,8 +13,8 @@
         "tempName": "Untitled1",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "1762,0",
-        "scrollLine": "1761",
+        "cursorPosition": "1765,19",
+        "scrollLine": "1760",
         "last_setup_crc32": "5bf6450ec4e2d899",
         "rmdVisualMode": "false",
         "rmdVisualCollapsedChunks": "",
@@ -24,11 +24,11 @@
         "docOutlineSize": "292"
     },
     "folds": "",
-    "lastKnownWriteTime": 1676973455,
+    "lastKnownWriteTime": 1677010852,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1676973566619,
+    "last_content_update": 1677011218683,
     "read_only": false,
     "read_only_alternatives": []
 }

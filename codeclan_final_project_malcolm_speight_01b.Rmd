@@ -1742,10 +1742,7 @@ The same trend for delays is mirrored across all three airports with delays high
 whilst they peak again in Dec and Jan. In other words, the delays are highest during the main 
 holiday periods. 
 
-It's worth noting that whilst JFK has higher passenger numbers, Newark still has more delays 
-in percentage terms. La Guardia has severe delays in the summer months but appears to recover 
-during the Christmas period of 2017. 
-
+La Guardia has severe delays in the summer months but appears to recover during the Christmas period of 2017. 
 <br>
 
 ```{r}
