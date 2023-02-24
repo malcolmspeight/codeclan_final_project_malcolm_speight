@@ -40,8 +40,28 @@ plane_data <- read_csv("data/planes.csv") %>%
 
 <br>
 
-NEED TO POPULATE THIS
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+The mangement team at Newark Airport know that there are a large number of 
+variables that impact the running of their airport. Some they can control and 
+others they can't. Understanding which variables are important and which aren't
+allows management to focus their attention on problem areas with confidence and 
+apply their finite resources more efficiently.
+
+Organisations are awash with data these days. Extracting value from the data-mountain
+can be a daunting task which can often lead to procrastination and a focus on 
+business-as-usual (BAU) rather than change. Whilst BAU might "get the job done" 
+in the short term, it doesn't facilitate growth or the adoption of new and more 
+efficient business practices. 
+
+Machine learning algorithms enables business to query large amounts of data and 
+zero-in on the most crucial information within a mountain of inputs and then use 
+that data to make predictions about the future based on historical patterns. 
+
+The machine learning techniques featured in this report will allow management to
+better understand their operating environment by providing statistical, fact based
+evidence as to which variables have the greatest impact on the running of the airport. 
+
+This knowledge will enable the management team at Newark Airport to take better 
+informed decisions and identify areas for further research. 
 
 <br>
 
@@ -299,10 +319,10 @@ data proved inconclusive. On reflection I realised that whilst linear
 regression is suited to predicting the value of a numeric variable based
 on its relationship to one or more independent variables, the delay
 associated with a plane departing an airport cannot possibly have a
-linear relationship to a series of independent variables. Their impact
-on delay is changeable and dependent on a myriad of combinations of
-these variables. A straight line can't be fitted to such data so trying
-to predict a value for delay with a linear regression model is not
+linear relationship to such a random series of independent variables. 
+Their impact on delay is changeable and dependent on a myriad of combinations 
+of these variables. A straight line can't be fitted to such data so trying
+to predict a value for delay with a linear regression model just isn't
 appropriate.
 
 I realised that in these circumstances it would be better to categorise
@@ -367,7 +387,8 @@ logistic regression is a categorical response. In this instance, `DELAY`
 or `NO DELAY`. Logistic regression uses a nonlinear function to model
 the relationship between the independent variables and the categorical
 response (predicted variable). This ensures that the output is always
-between 0 and 1 for all possible combination of input values. <br> <br>
+between 0 and 1 for all possible combination of input values. 
+<br> <br>
 
 ##### (1) Weather related delays
 
@@ -474,14 +495,13 @@ newark_flights_clean <- newark_flights %>%
 ```
 
 For `dep_delay` we can use mean imputation to resolve the missing
-values.
+values. After which, the summary statistics reamin relatively 
+unchanged for `dep_delay`.
 
 ```{r}
 newark_flights_clean <- newark_flights_clean %>% 
   mutate(dep_delay = coalesce(dep_delay, mean(dep_delay, na.rm = TRUE)))
 ```
-
-The summary statistics are relatively unchanged for `dep_delay`
 
 ```{r}
 newark_flights_clean %>% 
@@ -489,7 +509,7 @@ newark_flights_clean %>%
   summary()
 ```
 
-For the remaining `tailnum` variable, I'll replace missing values with
+For the remaining `tailnum` variable, I replace missing values with
 "ABCXYZ".
 
 ```{r}
@@ -505,7 +525,7 @@ colSums(is.na(newark_flights_clean))
 ```
 
 The number of observations has reduced by the number of `NAs` or
-cancelled flights (3,266) captured within `air_time`. We now have
+cancelled flights (3,266) captured within `air_time`. There are now
 112,702 observations.
 
 ```{r}
@@ -516,7 +536,7 @@ dim(newark_flights_clean)
 *Outliers* <br> Logistic regression models are sensitive to outliers
 within the dataset.
 
-Let's deal first with the `newark_flights_clean` data.
+Turning first to the `newark_flights_clean` data.
 
 ```{r, message=FALSE}
 newark_flights_clean %>% 
@@ -566,8 +586,8 @@ newark_flights_clean %>%
 ```
 
 *Dependent variable* <br> There is currently no dependent variable
-(class) in the `newark_flights_clean` dataset so we should add one.
-Logistic regression requires this. Newark Airport are interested in
+(class) in the `newark_flights_clean` dataset. We need to add one as 
+logistic regression requires it. Newark Airport are interested in
 departure delays. Although the US aviation authority (The FAA) state
 that flights departing with less than a 15 minute delay are deemed to be
 'on time', we will classify all flights with a departure delay of
@@ -686,9 +706,9 @@ newark_weather_clean %>%
 
 Wind direction (`wind_dir`) is not skewed so we will retain all of those
 observations. Visibility (`visib`) has a limited range of values and so
-will be excluded from quantile reduction. For the `wind_speed` and
-`wind_gust` we will remove those values more than 1.5 times the IQR (or
-less than in the case of visibility).
+will be excluded from quantile reduction, otherwise "10" miles will be the 
+only value remaining for `visib`. For the `wind_speed` and `wind_gust` 
+we will remove those values more than 1.5 times the IQR.
 
 ```{r}
 # remove outliers from the weather data
@@ -1155,7 +1175,7 @@ newark_flights_clean %>%
 
 <br>
 
-**Flight delays and Other Factors** <br> Let's combine `newark_flights_clean` 
+**Flight delays and Other Factors** <br> We combine `newark_flights_clean` 
 with `plane_data_clean`. We can then build another model to examine the 
 impact of 'other factors' on delays at Newark Airport.
 
@@ -1206,7 +1226,7 @@ round(prop.table(table(select(other_delays_test, delayed), exclude = NULL)), 3) 
 ```
 
 There is a slight class imbalance in the training data set. The
-imbalance is not massively significant so we will continue.
+imbalance is not massively significant so we continue.
 
 *Training the model* <br> We build the model using the training set of data.
 
@@ -1248,7 +1268,7 @@ alias(other_delays_mod1)
 It's clear that `distance` and `dest` are also highly correlated, which
 makes sense.
 
-Let's remove `air_time` and `dest` but retain `distance` which is a more
+We remove `air_time` and `dest` but retain `distance` which is a more
 intuitive and accurate measure of length or duration, rebuild the
 model and evaluate the results.
 
@@ -1355,8 +1375,8 @@ captures additional diagnostic variables:
 
 -   the null deviance value indicates how well the model did in predicting the 
     outcome (delay/no delay) without using the predictor variables. The lower
-    the value the better. This model's value is 25% lower than the final weather
-    model. 
+    the value the better. This model's value is 25% lower than the weather
+    model reported in the previous section. 
 
 -   the difference between the null and residual deviance values
     indicates to what degree the model's predictive capability was
@@ -1410,8 +1430,10 @@ far more important predictors of delay than the weather.
 
 ##### (3) Cancelled flights model
 
-As noted earlier there appear to be a number of cancelled flights in the
-`flights` dataset denoted by `NA` values within the `air_time` variable.
+Cancelled flights can be seeen as an extension of the delayed flights issue 
+at Newark Airport. As noted earlier there appear to be a number of cancelled 
+flights in the `flights` dataset denoted by `NA` values within the 
+`air_time` variable.
 
 ```{r, echo=TRUE}
 newark_cancelled <- newark_flights
@@ -1495,9 +1517,8 @@ newark_cancelled_clean <- newark_cancelled_clean %>%
 <br>
 
 *Join cancelled dataset to weather and plane data* <br> We want to join
-the clean weather and clean plane datasets to the clean cancelled
-flights data to create a large data set to build our cancelled model
-upon.
+the *clean weather* and *clean plane* datasets to the *clean cancelled flights* 
+data to create a large data set to build our cancelled model upon.
 
 ```{r, echo=TRUE}
 newark_cancelled_weather <- 
@@ -1571,7 +1592,7 @@ Again the class distribution of the original data set is as follows:
 round(prop.table(table(select(newark_cancelled_weather_other_ROSE, cancelled), exclude = NULL)), 3) * 100 
 ```
 
-The class distribution of the training set will reflect this.
+The class distribution of the training set will initially reflect this.
 
 ```{r, echo=TRUE}
 # class distribution in training set
@@ -1742,7 +1763,7 @@ The same trend for delays is mirrored across all three airports with delays high
 whilst they peak again in Dec and Jan. In other words, the delays are highest during the main 
 holiday periods. 
 
-La Guardia has severe delays in the summer months but appears to recover during the Christmas period of 2017. 
+La Guardia has severe delays in the summer months but appears to recover  during the Christmas period of 2017. 
 <br>
 
 ```{r}
@@ -1773,11 +1794,39 @@ the other NYC airports (see first graph).
 
 **Conclusions** <br>
 
+From the limited data set available, one can conclude that the weather does not 
+have a significant impact on flight delays. 
+
+Of the weather variables available and those with sufficient data, it was clear 
+that only visibility could be deemed to be significant. Even then, it's inclusion 
+in the model added limited, if any, predictive ability. 
+
+Other factors outwith the weather were proven to have an impact on departure 
+delays from Newark Airport. The time and day of departure were seen to have a 
+significant impact on departure delays. In addition to this, the level of activity
+at the airport as well as the capacity of the departing plane were also proven
+to be good predictors of flight delays. 
+
+There was also scope within the dataset to identify and extension to the problem
+of delayed flights. That is, cancelled flights. Many variables were identified as 
+being significant in predicting flights being cancelled. The data set for
+cancelled flights was small (about 3% of the departing flights data set) which may
+have resulted in the final model being less robust than one would have liked. A 
+larger dataset and further work on this may provide more insight and a stronger 
+predictive model. 
+
+In terms of comparison to the other international airports in New York, Newark Airport
+could be seen to have trended in-line with both JFK and La Guardia during 2017. 
+
+<br>
+
 **Future Work** <br>
 
 -   Larger data set: The approach detailed above could be revisited with
     a larger data set including all departures from Newark Airport, all
-    arrivals and a full complement of weather data
+    arrivals and a full complement of weather data. Data really is the key
+    to better informing the machine learning algorithm which, in turn, 
+    management can learn from. 
 
 -   Cutoff value: All model predictions in this paper have assumed a 0.5
     threshold to realise a `TRUE` value.\
@@ -1794,6 +1843,7 @@ the other NYC airports (see first graph).
 
     A potential approach would be to predict the length of delay for
     flight departures into 3 categories: small delay (\< 30 mins),
-    medium delay (31 - 60 mins) and long delay (\> 61 mins). A model
+    medium delay (31 - 60 mins) and long delay (\> 60 mins). A model
     could be created for each category and the predicted value would be
     taken from the model with the highest probability factor.
+  
