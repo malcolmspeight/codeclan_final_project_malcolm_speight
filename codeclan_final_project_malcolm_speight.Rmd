@@ -131,19 +131,20 @@ Airport:
 departing the three NYC international airports during 2017. Examples of
 data points include departure date, departure time, departure delay,
 arrival time, flight number, distance between origin and destination
-airports.
+airports. In total there were 303,748 observations with 8 variables. 
 
-*airports* - details of over 1,300 airports in the USA including their
-Federal Aviation Authority (FAA) airport code, latitude and longitude.
+*airports* - details of 1,333 airports in the USA with 8 variables including 
+their Federal Aviation Authority (FAA) airport code, latitude and longitude.
 
-*airlines* - the carrier name and code of 12 airlines
+*airlines* - there are 12 airlines in this dataset with 2 variables listed
+for each, the carrier name and code. 
 
-*planes* - details of over 3,500 aeroplanes listing amongst other things
-their tail number (unique identifier), year of manufacture and seat
-numbers (capacity)
+*planes* - details of 3,521 aeroplanes with 9 variables to describe them. 
+The variables include their tail number (unique identifier), year of manufacture
+and seat numbers (capacity).
 
 *weather* - weather data for all three NYC international airports in
-2017.
+2017. In total there are 26,201 weather observations with 15 variables. 
 
 **External data** <br> Despite an extensive internet search I could not
 find free access to hourly weather data for Newark Airport and so was
@@ -364,14 +365,36 @@ being asked.
 I outlined my initial thoughts on paper and once I had refined these
 sufficiently began to work in `RStudio`. I also made use of the Lucid
 website (`https://lucid.app`) to draw relationships between the datasets
-and the `ggplot` package in `RStudio` to generate visualisations. These
-were the only tools I used during my work on the Newark Airport
+and the `ggplot` package in `RStudio` to generate visualisations. 
+
+I made use of GitHub for back-up and version control as I developed this report. 
+The resulting report summary and presentation was made using MS PowerPoint.
+These were the tools I used during my work on the Newark Airport
 assignment.\
 <br> <br>
 
-#### Predictive Analysis
+#### Descriptive Analysis
 
-<br>
+The data is historical in that all of it relates to 2017. All of the data sets 
+provided are investigated in this report. When cleaning the data the summary 
+statistics are reviewed for each variable before decisions to remove or impute 
+missing values are taken. Similarly, plots of the data are examined to identify 
+outliers and better understand what the records show and how the variables 
+relate to one another. 
+
+#### Diagnostic Analysis
+
+Newark Airport have asked me to investigate if relationships exist between 
+weather data and delays to flights. In this report I use regression analysis to 
+examine the relationship between variables and to quantify that relationship 
+where one exists. Uncovering such relationships will help determine what is 
+causing flights to be delayed and the relative impact each of these variables 
+has on departure delays. 
+
+Beyond weather, I look at other factors which may be contributing to delays and 
+develop a further model to explain why some flights may end up being cancelled. 
+
+#### Predictive Analysis
 
 Whilst linear regression seeks to predict a numeric response, logistic
 regression seeks to predict the probability of a particular outcome.
@@ -383,14 +406,18 @@ will be delayed?
 
 **Logistic regression** is a classification modelling technique. Whilst
 the output of linear regression is a predicted value, the output of
-logistic regression is a categorical response. In this instance, `DELAY`
-or `NO DELAY`. Logistic regression uses a nonlinear function to model
+logistic regression is a categorical response. In this report models are build 
+to categorise a set of variables as indicative of `DELAY` or `NO DELAY` to flight
+departure times. 
+
+Logistic regression uses a nonlinear function to model
 the relationship between the independent variables and the categorical
 response (predicted variable). This ensures that the output is always
 between 0 and 1 for all possible combination of input values. 
 <br> <br>
 
-##### (1) Weather related delays
+
+##### (1) Weather Related Delays
 
 <br>
 
@@ -964,7 +991,7 @@ not appear to be a factor in determining departure delays from Newark Airport.
 <br>
 <br>
 
-##### (2) Other factors impacting delays
+##### (2) Other Factors Impacting Delays
 
 <br>
 
@@ -1428,7 +1455,7 @@ far more important predictors of delay than the weather.
 <br> <br>
 
 
-##### (3) Cancelled flights model
+##### (3) Cancelled Flights Model
 
 Cancelled flights can be seeen as an extension of the delayed flights issue 
 at Newark Airport. As noted earlier there appear to be a number of cancelled 
@@ -1729,7 +1756,7 @@ This is despite the class bias being adjusted in the training data set.
 <br> <br>
 
 
-#### Comparison of delays across New York airports
+#### Comparison of Delays Across New York Airports
 
 <br>
 
@@ -1807,7 +1834,7 @@ significant impact on departure delays. In addition to this, the level of activi
 at the airport as well as the capacity of the departing plane were also proven
 to be good predictors of flight delays. 
 
-There was also scope within the dataset to identify and extension to the problem
+There was also scope within the dataset to identify an extension to the problem
 of delayed flights. That is, cancelled flights. Many variables were identified as 
 being significant in predicting flights being cancelled. The data set for
 cancelled flights was small (about 3% of the departing flights data set) which may
